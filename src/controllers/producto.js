@@ -41,6 +41,7 @@ exports.eliminarProducto = asyncHandler(async (req, res, next) => {
 exports.getProductos = asyncHandler(async (req, res, next) => {
     let productos = await Producto.findAll({
         attributes: [
+            "id",
             "descripcion",
             "codigo",
             "puntos", 
@@ -58,4 +59,10 @@ exports.getProductos = asyncHandler(async (req, res, next) => {
     return res.status(200).json({ success: true, data: productos });
 
     //return res.status(404).json({ success: false, msg: "Till not created" })
+})
+
+exports.editarProducto = asyncHandler(async (req, res, next) => {
+    
+    
+    return res.status(200).json({ success: true, data: {} });
 })

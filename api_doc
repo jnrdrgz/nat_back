@@ -48,8 +48,8 @@ parameters:
 return:
 {
     "success": true,
-    "data": [
-        {
+    [
+        Pedidos: {
             "descripcion": "Producto1",
             "codigo": 111111,
             "puntos": 123,
@@ -89,7 +89,24 @@ parameters:
                 "subtotal": float
 		    },
             ... n canitadad de detalles
-	    ]
+
+            !! IMPORTANTE !!
+            tambien se puede cargar asi:
+            SE PUEDEN COMBINAR LAS DOS FORMAS
+            {
+                {
+                    "descripcion": string,
+                    "codigo": long,
+                    "puntos": long,
+                    "precio": float,
+                    "stock": float,
+                }
+			    "cantidad": float,
+                "subtotal": float
+		    },
+	    ],
+            
+        ]
     },
 	"Cliente": {
 		"nombre": string,
@@ -123,6 +140,7 @@ return
                     "PedidoId": "c39e6376-fafd-4e53-92dc-90cae896b4c1",
                 }
             ]
+
         },
         "Cliente": {
             "id": "a5c2045c-81f7-4e8f-999a-da1bb4723ed3",
@@ -168,7 +186,6 @@ return
 }
 
 falta hacer error handling y correciones:
-
 Endpoint: /productos/eliminar PUT
 Endpoint: /productos/agregar POST
 Endpoint: /productos GET

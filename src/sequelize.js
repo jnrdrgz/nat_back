@@ -59,7 +59,7 @@ Pedido.hasOne(PedidoCliente)
 PedidoCliente.Pedido = PedidoCliente.belongsTo(Pedido)
 
 Pedido.hasOne(PedidoProveedor)
-PedidoProveedor.belongsTo(Pedido)
+PedidoProveedor.Pedido = PedidoProveedor.belongsTo(Pedido)
 
 module.exports = {
     Balance,
