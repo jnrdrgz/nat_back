@@ -11,14 +11,13 @@ module.exports = (sequelize, DataTypes) => {
         cantidad:{
             type: DataTypes.DECIMAL(10,2),
             allowNull: false,
+            defaultValue: 1.0
         },
         subtotal:{
             type: DataTypes.DECIMAL(10,2),
             //allowNull: false,
             //
             defaultValue: 0.0
-       
-
             //set(value) {
             //    this.setDataValue('subtotal', this.cantidad);
             //}
