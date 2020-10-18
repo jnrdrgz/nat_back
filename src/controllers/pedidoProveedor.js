@@ -39,7 +39,7 @@ exports.getAllPedidoProveedor = asyncHandler(async (req, res, next) => {
                 include: [{
                     model: DetallePedido, attributes: ["cantidad", "subtotal"],
                     include: [{
-                      model: Producto, attributes: ["descripcion", "precio"]}]
+                      model: Producto, attributes: ["descripcion", "precio", "precioCosto"]}]
                 }]
             }
         ],
