@@ -15,11 +15,11 @@ module.exports = (sequelize, DataTypes) => {
         },
         total:{
             type: DataTypes.DECIMAL(10,2),
+            defaultValue: 0.0,
             allowNull: false,
         },
-        estaEliminado:{
+        cancelado:{
             type: DataTypes.BOOLEAN,
-            allowNull: true,
             defaultValue: false
         }
     })

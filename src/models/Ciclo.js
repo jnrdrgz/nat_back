@@ -10,13 +10,16 @@ module.exports = (sequelize, DataTypes) => {
         fechaInicio:{
             type:DataTypes.DATE,
             allowNull: true, 
+            defaultValue: DataTypes.NOW
         },
         fechaFin:{
             type:DataTypes.DATE,
             allowNull: true, 
+            defaultValue: DataTypes.NOW
         },
         numero:{
             type: DataTypes.STRING,
+            defaultValue: "",
             allowNull: false,    
         },
         estaEliminado:{
