@@ -82,7 +82,7 @@ res.status(412).json({msg: error.message});
 
 
 exports.editarProducto = asyncHandler(async (req, res, next) => {
-    const productoedit = Producto.update(req.body, {where: req.params})
+  const productoedit = Producto.update(req.body, {where: req.params})
 
     return res.status(200).json({ success: true, data: {productoedit} });
 })

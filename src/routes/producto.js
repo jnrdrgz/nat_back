@@ -11,7 +11,7 @@ const {
 
 router.route("/").get(getProductos);
 router.route("/agregar").post(agregarProducto);
-router.route("/editar/:id").put(editarProducto);
+router.route("/editar").put(editarProducto);
 router.route("/eliminar").put(eliminarProducto);
 router.route("/:id").get(seleccionarproductoid);
 
