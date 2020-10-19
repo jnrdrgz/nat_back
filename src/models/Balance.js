@@ -9,10 +9,12 @@ module.exports = (sequelize, DataTypes) => {
         },
         ingresos:{
             type: DataTypes.DECIMAL(10,2),
+            defaultValue: 0.0,
             allowNull: false,
         },
         egresos:{
             type: DataTypes.DECIMAL(10,2),
+            defaultValue: 0.0,
             allowNull: false,
         },
     })

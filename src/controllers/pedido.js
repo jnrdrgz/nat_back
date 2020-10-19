@@ -29,7 +29,7 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
 })
 
 //cancelar?
-exports.eliminarPedido = asyncHandler(async (req, res, next) => {
+exports.cancelarPedido = asyncHandler(async (req, res, next) => {
     console.log(req.body)
 
     res.status(200).json({ success: true, data:{} });
@@ -51,8 +51,8 @@ exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
             { model: Pedido, attributes: ["total"],
                 include: [{
                     model: DetallePedido, attributes: ["cantidad", "subtotal"],
-                    include: [{model: Producto, attributes: ["descripcion", "precio"]}]
-                }]
+                    include: [{model: Producto, attributes: ["descripcion", "precio", "precioCosto"]}] 
+                }] 
             }
         ],
     });
@@ -60,8 +60,10 @@ exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
     pedidos.map(p => {
             let total_pedido = 0
             p.Pedido.DetallePedidos.map(dp => {
-                dp.subtotal = dp.cantidad * dp.Producto.precio
-                total_pedido += dp.subtotal
+                if(dp.Producto !== null){//temporal
+                    dp.subtotal = dp.cantidad * dp.Producto.precio
+                    total_pedido += dp.subtotal
+                }
             })
 
             p.Pedido.total = total_pedido
@@ -72,7 +74,6 @@ exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
     return res.status(200).json({ success: true, data: pedidos });
 
 })
-
 
 exports.pedidoEntregado = asyncHandler(async (req, res, next) => {
     console.log(req.body)

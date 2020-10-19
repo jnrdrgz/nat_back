@@ -10,20 +10,38 @@ const asyncHandler = require("../middlewares/asyncHandler")
 
 
 exports.agregarPedidoProveedor = asyncHandler(async (req, res, next) => {
+
+})
+
+exports.agregarPedidoProveedor = asyncHandler(async (req, res, next) => {
     console.log(req.body)
 
-    const pedidoprov = await PedidoProveedor.create(req.body, {include: [
+    const pedidoProv = await PedidoProveedor.create(req.body, {include: [
         {association: PedidoProveedor.Pedido, include: [
             {association: Pedido.DetallePedido,
                 include: [{association: DetallePedido.Producto}]}
         ]}
     ]});
 
+    
+    if(req.body.recibido){
+        //cargar stock
+        //pedidoProv
+        await Promise.all(
+            pedidoProv.Pedido.DetallePedidos.map(async (dp) => {
+                await Producto.increment('stock', { by: dp.cantidad, where: { id: dp.ProductoId } },
+                   
+                  )
+            })
+        );
 
-    console.log(pedidoprov.Pedido)
-    await pedidoprov.save();
+        
+    }
 
-    res.status(200).json({ success: true, data:pedidoprov });
+    await pedidoProv.save()
+
+    
+    res.status(200).json({ success: true, data:pedidoProv });
 })
 
 
