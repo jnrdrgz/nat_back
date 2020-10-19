@@ -36,7 +36,7 @@ return:
     ]
 }
 
-notas: 
+notas:
 -solo devuelve si estaEliminado == false
 -foto es una url con la img del producto
 
@@ -70,7 +70,7 @@ return:
     ]
 }
 
-notas: 
+notas:
 -solo devuelve si estaEliminado == false
 -foto es una url con la img del producto
 
@@ -105,13 +105,13 @@ parameters:
                 "subtotal": float
 		    },
 	    ],
-            
+
         ]
     },
 	"Cliente": {
 		"nombre": string,
 		"numeroTelefono": string
-	} 
+	}
 }
 return
 {
@@ -156,7 +156,7 @@ Endpoint: /pedidos/cliente
 GET:
 parameters:
 -
-return 
+return
 {
     "success": true,
     "data": [
@@ -184,6 +184,154 @@ return
         }
     ]
 }
+
+Endpoint: /pedidos/proveedor/agregar
+POST:
+parameters:
+-
+{
+    "Pedido":{
+        "total": 0.0,
+	    "DetallePedidos": [
+		    {
+			    "ProductoId": "b78aa4cb-bc44-4a24-bb30-163fe8a4a79b",
+			    "cantidad": 3.0
+		    },
+            {
+			    "Producto":{
+                    "descripcion": "producto nuevo ceado directamente",
+                    "codigo": 13551,
+                    "puntos": 345,
+                    "precio": 321.12,
+                    "stock": 333.00
+                },
+			    "cantidad": 5.0
+		    }
+	    ]
+    }
+}
+
+return
+
+{
+    "success": true,
+    "data": {
+        "id": "39e9e4e8-b8e1-4154-928a-774cd015170c",
+        "Pedido": {
+            "id": "b749e63f-02a3-4362-8baa-6baf1ecbce48",
+            "fecha": "2020-10-18T06:28:27.550Z",
+            "estaEliminado": false,
+            "total": 0,
+            "DetallePedidos": [
+                {
+                    "id": "ff059832-d5db-45c7-a3f0-f09c274648bb",
+                    "subtotal": 0,
+                    "ProductoId": "b78aa4cb-bc44-4a24-bb30-163fe8a4a79b",
+                    "cantidad": 3,
+                    "PedidoId": "b749e63f-02a3-4362-8baa-6baf1ecbce48",
+                    "updatedAt": "2020-10-18T06:28:27.736Z",
+                    "createdAt": "2020-10-18T06:28:27.736Z"
+                },
+                {
+                    "id": "004870ec-a48a-4e44-8bfc-fdcbc2c24037",
+                    "subtotal": 0,
+                    "Producto": {
+                        "id": "0589d8a0-b4fc-4362-b6d1-768150e6a83a",
+                        "foto": "a",
+                        "estaEliminado": false,
+                        "descripcion": "producto nuevo ceado directamente",
+                        "codigo": 13551,
+                        "puntos": 345,
+                        "precio": 321.12,
+                        "stock": 333,
+                        "updatedAt": "2020-10-18T06:28:27.738Z",
+                        "createdAt": "2020-10-18T06:28:27.738Z"
+                    },
+                    "cantidad": 5,
+                    "PedidoId": "b749e63f-02a3-4362-8baa-6baf1ecbce48",
+                    "updatedAt": "2020-10-18T06:28:27.737Z",
+                    "createdAt": "2020-10-18T06:28:27.737Z",
+                    "ProductoId": "0589d8a0-b4fc-4362-b6d1-768150e6a83a"
+                }
+            ],
+            "updatedAt": "2020-10-18T06:28:27.553Z",
+            "createdAt": "2020-10-18T06:28:27.553Z"
+        },
+        "updatedAt": "2020-10-18T06:28:27.551Z",
+        "createdAt": "2020-10-18T06:28:27.551Z",
+        "PedidoId": "b749e63f-02a3-4362-8baa-6baf1ecbce48"
+    }
+}
+
+Endpoint: /pedidos/proveedor
+GET:
+parameters:
+-
+return
+
+{
+    "success": true,
+    "data": [
+        {
+            "id": "0431f1af-ced3-406c-92ed-0f727ceac969",
+            "Pedido": {
+                "total": 1905.6,
+                "fecha": "2020-10-16T21:05:57.654Z",
+                "DetallePedidos": [
+                    {
+                        "cantidad": 3,
+                        "subtotal": 300,
+                        "Producto": {
+                            "descripcion": "Producto1",
+                            "precio": 100
+                        }
+                    },
+                    {
+                        "cantidad": 5,
+                        "subtotal": 1605.6,
+                        "Producto": {
+                            "descripcion": "Pldsald",
+                            "precio": 321.12
+                        }
+                    }
+                ]
+            }
+        },
+        {
+            "id": "39e9e4e8-b8e1-4154-928a-774cd015170c",
+            "Pedido": {
+                "total": 1905.6,
+                "fecha": "2020-10-18T06:28:27.550Z",
+                "DetallePedidos": [
+                    {
+                        "cantidad": 5,
+                        "subtotal": 1605.6,
+                        "Producto": {
+                            "descripcion": "producto nuevo ceado directamente",
+                            "precio": 321.12
+                        }
+                    },
+                    {
+                        "cantidad": 3,
+                        "subtotal": 300,
+                        "Producto": {
+                            "descripcion": "Producto1",
+                            "precio": 100
+                        }
+                    }
+                ]
+            }
+        }
+    ]
+}
+
+
+
+
+
+
+
+
 
 falta hacer error handling y correciones:
 Endpoint: /productos/eliminar PUT

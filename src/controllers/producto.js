@@ -2,7 +2,7 @@ const {Op} = require('sequelize')
 const {Producto} = require('../sequelize')
 const asyncHandler = require("../middlewares/asyncHandler")
 
-exports.test = (req, res, next) => 
+exports.test = (req, res, next) =>
     Promise.resolve((async (req, res, next) => {
         res.status(200).json({ success: true, data: "Alive" });
     })(req,res,next).catch(next))
@@ -24,7 +24,7 @@ exports.eliminarProducto = asyncHandler(async (req, res, next) => {
             "id",
             "descripcion",
             "codigo",
-            "puntos", 
+            "puntos",
             "precio",
             "stock",
             "foto",
@@ -44,7 +44,7 @@ exports.getProductos = asyncHandler(async (req, res, next) => {
             "id",
             "descripcion",
             "codigo",
-            "puntos", 
+            "puntos",
             "precio",
             "stock",
             "foto",
@@ -55,14 +55,34 @@ exports.getProductos = asyncHandler(async (req, res, next) => {
         }
     });
 
-    //if (productos.length != 0) 
+    //if (productos.length != 0)
     return res.status(200).json({ success: true, data: productos });
 
     //return res.status(404).json({ success: false, msg: "Till not created" })
 })
 
+exports.seleccionarproductoid = asyncHandler(async (req, res, next) => {
+console.log(req.body)
+
+const productoid = await Producto.findOne({where: req.params})
+.then(result => {
+    if (result) {
+      res.json(result);
+}
+ else {
+ res.sendStatus(404);
+}
+})
+.catch(error => {
+res.status(412).json({msg: error.message});
+});
+
+})
+
+
+
 exports.editarProducto = asyncHandler(async (req, res, next) => {
-    
-    
-    return res.status(200).json({ success: true, data: {} });
+  const productoedit = Producto.update(req.body, {where: req.params})
+
+    return res.status(200).json({ success: true, data: {productoedit} });
 })

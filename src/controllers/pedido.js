@@ -5,7 +5,6 @@ const {
     DetallePedido,
     PedidoCliente,
     Producto,
-    PedidoProveedor,
     sequelize
 } = require('../sequelize')
 
@@ -16,9 +15,9 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
 
     const pedido = await PedidoCliente.create(req.body, {include: [
         {association: PedidoCliente.Cliente},
-        {association: PedidoCliente.Pedido, include: [ 
-            {association: Pedido.DetallePedido, 
-                include: [{association: DetallePedido.Producto}]} 
+        {association: PedidoCliente.Pedido, include: [
+            {association: Pedido.DetallePedido,
+                include: [{association: DetallePedido.Producto}]}
         ]}
     ]});
 
@@ -49,8 +48,8 @@ exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
         ],
         include: [
             { model: Cliente, attributes: ["nombre"] },
-            { model: Pedido, attributes: ["total"], 
-                include: [{ 
+            { model: Pedido, attributes: ["total"],
+                include: [{
                     model: DetallePedido, attributes: ["cantidad", "subtotal"],
                     include: [{model: Producto, attributes: ["descripcion", "precio", "precioCosto"]}] 
                 }] 
@@ -67,11 +66,29 @@ exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
                 }
             })
 
-            p.Pedido.total = total_pedido 
+            p.Pedido.total = total_pedido
         }
     )
 
-     
+
     return res.status(200).json({ success: true, data: pedidos });
 
+})
+
+exports.pedidoEntregado = asyncHandler(async (req, res, next) => {
+    console.log(req.body)
+
+    const pedEntregado = await PedidoCliente.findByPk(req.body.id, {
+        attributes: [
+            "id",
+            "montoSaldado",
+            "entregado",
+            "pagado"
+        ]
+    });
+
+    pedEntregado.entregado = true
+    pedEntregado.save()
+
+    res.status(200).json({ success: true, data:{} });
 })
