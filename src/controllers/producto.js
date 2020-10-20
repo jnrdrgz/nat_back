@@ -82,7 +82,22 @@ res.status(412).json({msg: error.message});
 
 
 exports.editarProducto = asyncHandler(async (req, res, next) => {
-  const productoedit = Producto.update(req.body, {where: req.params})
+  let productoedit = await Producto.findByPk(req.body.id, {
+      attributes: [
+          "id",
+          "descripcion",
+          "codigo",
+          "puntos",
+          "precio",
+          "stock",
+          "foto",
+          "estaEliminado",
+      ]
+  });
 
-    return res.status(200).json({ success: true, data: {productoedit} });
+await productoedit.update(req.body, {where: req.params})
+
+ productoedit.save()
+
+return res.status(200).json({ success: true, data: {productoedit} });
 })
