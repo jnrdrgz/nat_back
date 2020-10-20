@@ -22,6 +22,11 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: "",
             allowNull: false,    
         },
+        //auto calculado si dan las fechas?
+        actual:{
+            type: DataTypes.BOOLEAN,
+            defaultValue: false
+        },
         estaEliminado:{
             type: DataTypes.BOOLEAN,
             allowNull: true,
