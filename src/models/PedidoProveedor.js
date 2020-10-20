@@ -8,5 +8,9 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             defaultValue: Sequelize.UUIDV4
         },
+        recibido:{
+            type: DataTypes.BOOLEAN,
+            defaultValue: true
+        },
     })
 }

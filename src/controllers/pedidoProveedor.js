@@ -8,9 +8,37 @@ const {
 } = require('../sequelize')
 const asyncHandler = require("../middlewares/asyncHandler")
 
-
-exports.agregarPedidoProveedor = asyncHandler(async (req, res, next) => {
-
+exports.marcarPedidoProveedorRecibido = asyncHandler(async (req, res, next) => {
+    console.log(req.body.id)
+    let pedido = await PedidoProveedor.findByPk(req.body.id, {
+        attributes: [
+            "id",
+            //recibido //agregar a modelo
+        ],
+        include: [
+            { model: Pedido, attributes: ["total"], 
+                include: [{ 
+                    model: DetallePedido, attributes: ["cantidad", "subtotal"],
+                    include: [{model: Producto, attributes: ["id", "descripcion", "precio", "precioCosto"]}] 
+                }] 
+            }
+        ],
+    });
+    
+    //if pedido not recibido
+    await Promise.all(
+        pedido.Pedido.DetallePedidos.map(async (dp) => {
+                await Producto.increment('stock', 
+                    { by: dp.cantidad, where: { id: dp.Producto.id } 
+                },
+              )
+        })
+    );
+    
+    // agregar a modelo
+    //pedido.estaEliminado = true
+    //pedido.save()
+    return res.status(200).json({ success: true, data: {} });
 })
 
 exports.agregarPedidoProveedor = asyncHandler(async (req, res, next) => {
@@ -29,12 +57,12 @@ exports.agregarPedidoProveedor = asyncHandler(async (req, res, next) => {
         //pedidoProv
         await Promise.all(
             pedidoProv.Pedido.DetallePedidos.map(async (dp) => {
-                await Producto.increment('stock', { by: dp.cantidad, where: { id: dp.ProductoId } },
-                   
+                    await Producto.increment('stock', 
+                        { by: dp.cantidad, where: { id: dp.ProductoId } 
+                    },
                   )
             })
         );
-
         
     }
 
