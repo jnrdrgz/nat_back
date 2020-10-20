@@ -65,6 +65,7 @@ module.exports = {
     Balance,
     Categoria,
     Cliente,
+    Ciclo,
     Cuota,
     DetallePedido,
     Linea,
