@@ -2,4 +2,19 @@ sacar total del back en pedidocliente
 ?? categoria linea
 se eliminan los pedidos? se cancelan? se editan?
 
-pedido proveedor doble penstaña
+handle errores por ejemplo producto se carga en pedido con id y no existe
+fecha pago
+
+ver como hacemo balance
+ciclos lo agregue pero solo al agregar que era una boludez
+agregarle ciclo a los pedidos
+onda como un pedido tiene detalles ponele tiene que tener un cicloid
+despues tema filtros que ya voy a ver bien como se hace
+seria onda traer solo pedidos del ciclo o traer solos pedidos de un cliente especifico o los que tienen deudas
+el tema de deudas tambien que es con cuotas
+ver si agregamos fecha de pago a pedido
+ver como cancelamo pedios
+pedidos
+despues todo el manejo de errores cosas onda que no se suban dos productos del mismo nombre
+y bue si algun dia alguien me dice como va la mano con eso, linea y categoria
+

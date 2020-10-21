@@ -341,16 +341,17 @@ Endpoint: /productos GET
 Endpoint: /pedidos/cliente GET
 Endpoint: /pedidos/cliente/agregar POST
 
-por hacer:
-Endpoint: /productos/editar PUT
 Endpoint: /pedidos/proveedor GET
 Endpoint: /pedidos/cliente/agregar POST
+
+por hacer:
+Endpoint: /productos/editar PUT
 Endpoint: /balance GET
 Endpoint: /ciclos GET
 Endpoint: /ciclos/agregar POST
 Endpoint: /cuotas/pagar PUT
-Endpoint: /pedidos/marcar_entregado PUT
-Endpoint: /pedidos/marcar_pagado PUT
-Endpoint: /pedidos/marcar_recibido PUT ???
+Endpoint: /pedidos/cliente/marcar_entregado PUT
+Endpoint: /pedidos/cliente/marcar_pagado PUT
+Endpoint: /pedidos/proveedor/marcar_recibido PUT ???
 
 ver filtros en get

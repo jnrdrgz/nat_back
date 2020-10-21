@@ -10,5 +10,3 @@ router.route("/agregar").post(agregarCiclo);
 
 
 module.exports = router;
-
-

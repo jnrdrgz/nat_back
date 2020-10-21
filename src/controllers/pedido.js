@@ -21,8 +21,6 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
         ]}
     ]});
 
-    console.log(pedido.Pedido)
-
     await pedido.save();
 
     res.status(200).json({ success: true, data:pedido });
