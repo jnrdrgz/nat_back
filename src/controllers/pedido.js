@@ -51,8 +51,8 @@ exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
             { model: Pedido, attributes: ["total"],
                 include: [{
                     model: DetallePedido, attributes: ["cantidad", "subtotal"],
-                    include: [{model: Producto, attributes: ["descripcion", "precio", "precioCosto"]}] 
-                }] 
+                    include: [{model: Producto, attributes: ["descripcion", "precio", "precioCosto"]}]
+                }]
             }
         ],
     });
@@ -84,11 +84,32 @@ exports.pedidoEntregado = asyncHandler(async (req, res, next) => {
             "montoSaldado",
             "entregado",
             "pagado"
-        ]
+        ], include: [
+            {association: PedidoCliente.Cliente},
+            {association: PedidoCliente.Pedido, include: [
+                {association: Pedido.DetallePedido,
+                    include: [{association: DetallePedido.Producto}]}
+            ]}
+        ],
+
+
     });
 
-    pedEntregado.entregado = true
-    pedEntregado.save()
 
+        pedEntregado.entregado = true
+
+        if(req.body.entregado = true){
+                await Promise.all(
+                    pedEntregado.Pedido.DetallePedidos.map(async (dp) => {
+                            await Producto.decrement('stock',
+                                { by: dp.cantidad, where: { id: dp.ProductoId }
+                            },
+                          )
+                    })
+                );
+
+            }
+
+    await   pedEntregado.save()
     res.status(200).json({ success: true, data:{} });
 })
