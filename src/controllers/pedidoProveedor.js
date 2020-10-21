@@ -36,8 +36,8 @@ exports.marcarPedidoProveedorRecibido = asyncHandler(async (req, res, next) => {
     );
     
     // agregar a modelo
-    //pedido.estaEliminado = true
-    //pedido.save()
+    pedido.recibido = true
+    pedido.save()
     return res.status(200).json({ success: true, data: {} });
 })
 
