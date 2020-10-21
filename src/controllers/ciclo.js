@@ -56,7 +56,7 @@ exports.getCicloActual = asyncHandler(async (req, res, next) => {
 
 
 exports.setCicloActual = asyncHandler(async (req, res, next) => {
-    let getActual = await Ciclo.findAll({
+    let cicloActual = await Ciclo.findAll({
         attributes: [
           "id",
           "fechaInicio",
@@ -70,8 +70,8 @@ exports.setCicloActual = asyncHandler(async (req, res, next) => {
         }
     });
 
-    getActual.actual = false
-    getActual.save()
+    cicloActual[0].actual = false
+    cicloActual[0].save()
 
 
 
@@ -91,4 +91,24 @@ exports.setCicloActual = asyncHandler(async (req, res, next) => {
 
      res.status(200).json({ success: true, data:{} });
 
+})
+
+
+exports.editCiclo = asyncHandler(async (req, res, next) => {
+    let cicloedit = await Ciclo.findByPk(req.body.id, {
+        attributes: [
+          "id",
+          "fechaInicio",
+          "fechaFin",
+          "numero",
+          "actual",
+          "estaEliminado",
+        ]
+    });
+
+    await cicloedit.update(req.body, {where: req.params})
+
+    cicloedit.save()
+
+    return res.status(200).json({ success: true, data: {cicloedit} });
 })
