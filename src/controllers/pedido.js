@@ -73,7 +73,7 @@ exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
 
 })
 
-exports.pedidoEntregado = asyncHandler(async (req, res, next) => {
+exports.marcarPedidoEntregado = asyncHandler(async (req, res, next) => {
     console.log(req.body)
 
     const pedEntregado = await PedidoCliente.findByPk(req.body.id, {
@@ -93,21 +93,16 @@ exports.pedidoEntregado = asyncHandler(async (req, res, next) => {
 
     });
 
+    await Promise.all(
+        pedEntregado.Pedido.DetallePedidos.map(async (dp) => {
+                await Producto.decrement('stock',
+                    { by: dp.cantidad, where: { id: dp.ProductoId }
+                })
+        })
+    );
 
-        pedEntregado.entregado = true
+    pedEntregado.entregado = true
+    await pedEntregado.save()
 
-        if(req.body.entregado = true){
-                await Promise.all(
-                    pedEntregado.Pedido.DetallePedidos.map(async (dp) => {
-                            await Producto.decrement('stock',
-                                { by: dp.cantidad, where: { id: dp.ProductoId }
-                            },
-                          )
-                    })
-                );
-
-            }
-
-    await   pedEntregado.save()
     res.status(200).json({ success: true, data:{} });
 })

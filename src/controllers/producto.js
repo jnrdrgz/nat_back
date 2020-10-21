@@ -55,10 +55,7 @@ exports.getProductos = asyncHandler(async (req, res, next) => {
         }
     });
 
-    //if (productos.length != 0)
     return res.status(200).json({ success: true, data: productos });
-
-    //return res.status(404).json({ success: false, msg: "Till not created" })
 })
 
 exports.seleccionarproductoid = asyncHandler(async (req, res, next) => {
@@ -68,36 +65,30 @@ const productoid = await Producto.findOne({where: req.params})
 .then(result => {
     if (result) {
       res.json(result);
-}
- else {
- res.sendStatus(404);
-}
+    } else {
+        res.sendStatus(404);
+    }}).catch(error => {
+        res.status(412).json({msg: error.message});
+    });
 })
-.catch(error => {
-res.status(412).json({msg: error.message});
-});
-
-})
-
-
 
 exports.editarProducto = asyncHandler(async (req, res, next) => {
-  let productoedit = await Producto.findByPk(req.body.id, {
-      attributes: [
-          "id",
-          "descripcion",
-          "codigo",
-          "puntos",
-          "precio",
-          "stock",
-          "foto",
-          "estaEliminado",
-      ]
-  });
+    let productoedit = await Producto.findByPk(req.body.id, {
+        attributes: [
+            "id",
+            "descripcion",
+            "codigo",
+            "puntos",
+            "precio",
+            "stock",
+            "foto",
+            "estaEliminado",
+        ]
+    });
 
-await productoedit.update(req.body, {where: req.params})
+    await productoedit.update(req.body, {where: req.params})
 
- productoedit.save()
+    productoedit.save()
 
-return res.status(200).json({ success: true, data: {productoedit} });
+    return res.status(200).json({ success: true, data: {productoedit} });
 })
