@@ -1,7 +1,8 @@
 const express = require("express")
 const bodyParser = require('body-parser')
 const producto = require("./routes/producto")
-const pedidos = require("./routes/pedidos")
+const pedidosCliente = require("./routes/pedidosCliente")
+const pedidosProveedor = require("./routes/pedidosProveedor")
 const ciclos = require("./routes/ciclos")
 
 var cors = require('cors')
@@ -14,7 +15,8 @@ app.get('/alive', (req,res) => {
 })
 
 app.use("/productos", producto);
-app.use("/pedidos", pedidos);
+app.use("/pedidos/cliente", pedidosCliente);
+app.use("/pedidos/proveedor", pedidosProveedor);
 app.use("/ciclos", ciclos);
 
 const PORT = 3001
