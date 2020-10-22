@@ -50,7 +50,7 @@ Pedido.belongsTo(Ciclo)
 
 //one to one
 Ciclo.hasOne(Balance)
-Balance.belongsTo(Ciclo)
+Balance.Ciclo = Balance.belongsTo(Ciclo)
 
 Producto.hasOne(DetallePedido)
 DetallePedido.Producto = DetallePedido.belongsTo(Producto)

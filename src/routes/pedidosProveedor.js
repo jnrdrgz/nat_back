@@ -8,7 +8,7 @@ const{
   } = require("../controllers/pedidoProveedor");
 
 router.route("/agregar").post(agregarPedidoProveedor);
-router.route("/marcar_recibido").put(marcarPedidoProveedorRecibido);
+router.route("/recibido").put(marcarPedidoProveedorRecibido);
 router.route("/").get(getAllPedidoProveedor);
 
 module.exports = router;

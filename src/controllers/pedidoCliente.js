@@ -21,6 +21,30 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
         ]}
     ]});
 
+    let total_pedido = 0
+    await Promise.all(
+        pedido.Pedido.DetallePedidos.map(async dp => {
+            if(dp.Producto){
+                dp.subtotal = dp.cantidad * dp.Producto.precio
+                total_pedido += dp.subtotal
+            } else {
+                const producto = await Producto.findOne({
+                    attributes: [
+                        "precio",
+                    ],
+                    where: {
+                        id: dp.ProductoId
+                    }
+                })
+
+                dp.subtotal = dp.cantidad * producto.precio
+                total_pedidopv += dp.subtotal
+            }
+        })
+    )
+
+    pedido.Pedido.total = total_pedido
+
     await pedido.save();
 
     res.status(200).json({ success: true, data:pedido });
@@ -54,20 +78,6 @@ exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
             }
         ],
     });
-
-    pedidos.map(p => {
-            let total_pedido = 0
-            p.Pedido.DetallePedidos.map(dp => {
-                if(dp.Producto !== null){//temporal
-                    dp.subtotal = dp.cantidad * dp.Producto.precio
-                    total_pedido += dp.subtotal
-                }
-            })
-
-            p.Pedido.total = total_pedido
-        }
-    )
-
 
     return res.status(200).json({ success: true, data: pedidos });
 
