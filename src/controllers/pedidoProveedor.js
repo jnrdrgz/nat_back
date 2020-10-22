@@ -28,9 +28,8 @@ exports.marcarPedidoProveedorRecibido = asyncHandler(async (req, res, next) => {
         ],
     });
     
-    console.log(pedido.toJSON())
+    //console.log(pedido.toJSON())
 
-    //if pedido not recibido
     if(!pedido.recibido){
         await Promise.all(
             pedido.Pedido.DetallePedidos.map(async (dp) => {

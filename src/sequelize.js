@@ -46,7 +46,7 @@ Cliente.hasMany(PedidoCliente)
 PedidoCliente.Cliente = PedidoCliente.belongsTo(Cliente)
 
 Ciclo.hasMany(Pedido)
-Pedido.belongsTo(Ciclo)
+Pedido.Ciclo = Pedido.belongsTo(Ciclo)
 
 //one to one
 Ciclo.hasOne(Balance)

@@ -7,7 +7,7 @@ const {
 const asyncHandler = require("../middlewares/asyncHandler")
 
 exports.getBalanceCiclo = asyncHandler(async (req, res, next) => {
-    console.log(req.body)
+    console.log(req.params)
 
     let balance = await Balance.findOne({
         attributes: [
@@ -16,11 +16,9 @@ exports.getBalanceCiclo = asyncHandler(async (req, res, next) => {
             "egresos",
         ],
         where: {
-            cicloId: req.body.cicloId
+            cicloId: req.params.id
         }
     });
 
     return res.status(200).json({ success: true, data: balance });
-
-
 })
