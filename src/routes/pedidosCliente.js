@@ -4,11 +4,13 @@ const router = express.Router();
 const {
     agregarPedidoCliente,
     getAllPedidoCliente,
-    marcarPedidoEntregado
+    marcarPedidoEntregado,
+    marcarPedidoPagado
 } = require("../controllers/pedidoCliente");
 
-router.route("/agregar").post(agregarPedidoCliente);
 router.route("/").get(getAllPedidoCliente);
+router.route("/agregar").post(agregarPedidoCliente);
 router.route("/entregado").put(marcarPedidoEntregado);
+router.route("/pagado").put(marcarPedidoPagado);
 
 module.exports = router;
