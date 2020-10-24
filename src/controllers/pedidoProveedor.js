@@ -40,12 +40,11 @@ exports.marcarPedidoProveedorRecibido = asyncHandler(async (req, res, next) => {
             })
         );
 
-        await Balance.increment("egresos", 
-            { by: pedido.Pedido.total, where: { CicloId: pedido.Pedido.Ciclo.id } 
-        })
+        //await Balance.increment("egresos", 
+        //    { by: pedido.Pedido.total, where: { CicloId: pedido.Pedido.Ciclo.id } 
+        //})
     }
 
-    // agregar a modelo
     pedido.recibido = true
     pedido.save()
     return res.status(200).json({ success: true, data: pedido });
@@ -67,19 +66,20 @@ exports.agregarPedidoProveedor = asyncHandler(async (req, res, next) => {
     await Promise.all(
         pedidoProv.Pedido.DetallePedidos.map(async dp => {
             if(dp.Producto){
-                dp.subtotal = dp.cantidad * dp.Producto.precio
+                dp.subtotal = dp.cantidad * dp.Producto.precioCosto
                 total_pedidopv += dp.subtotal
             } else {
                 const producto = await Producto.findOne({
                     attributes: [
                         "precio",
+                        "precioCosto",
                     ],
                     where: {
                         id: dp.ProductoId
                     }
                 })
 
-                dp.subtotal = dp.cantidad * producto.precio
+                dp.subtotal = dp.cantidad * producto.precioCosto
                 await dp.save()
 
                 total_pedidopv += dp.subtotal
@@ -89,8 +89,6 @@ exports.agregarPedidoProveedor = asyncHandler(async (req, res, next) => {
 
     pedidoProv.Pedido.total = total_pedidopv
     await pedidoProv.Pedido.save()
-
-
     
     if(req.body.recibido){
         //cargar stock
@@ -131,6 +129,7 @@ exports.getAllPedidoProveedor = asyncHandler(async (req, res, next) => {
             }
         ],
     });
+    
 
     return res.status(200).json({ success: true, data: pedidosprov });
 

@@ -36,6 +36,7 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
                 const producto = await Producto.findOne({
                     attributes: [
                         "precio",
+                        "precioCosto",
                     ],
                     where: {
                         id: dp.ProductoId
@@ -145,9 +146,9 @@ exports.marcarPedidoPagado = asyncHandler(async (req, res, next) => {
 
     if(!pedidoCl.pagado){
     
-        await Balance.increment("ingresos", 
-            { by: pedidoCl.Pedido.total, where: { CicloId: pedidoCl.Pedido.Ciclo.id } 
-        })
+        //await Balance.increment("ingresos", 
+        //    { by: pedidoCl.Pedido.total, where: { CicloId: pedidoCl.Pedido.Ciclo.id } 
+        //})
     }
 
     pedidoCl.pagado = true
