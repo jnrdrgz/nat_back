@@ -8,15 +8,20 @@ PRIORIDAD
     pedido cliente:
         agregar, cancelar, marcar pagado/marcar entregado
             endpoint: pedidos/cliente/cancelar
+        pedidos no pagados:
+            endpoint: pedidos/cliente/noPagados
     pedido proveedor:
         agregar, cancelar, marcar recibido 
-            endpoint: pedidos/cliente/cancelar
+            endpoint: pedidos/proveedor/cancelar
     producto:
-     ciclo:
+    ciclo:
         alta baja
             endpoint: ciclos/eliminar
     balance: 
         
+opcional: 
+    los editar
+
 lo que anotamos el otro dia con leo:
 cosas:
 agregarle ciclo a los pedidos 
