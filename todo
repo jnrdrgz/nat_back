@@ -1,5 +1,42 @@
-?? categoria linea
-se eliminan los pedidos? se cancelan? 
+
+PRIORIDAD
+
+2/11 demo:
+    home:
+        tiempo que falta para que finalice el ciclo
+            endpoint: ciclos/tiempoRestanteActual
+    pedido cliente:
+        agregar, cancelar, marcar pagado/marcar entregado
+            endpoint: pedidos/cliente/cancelar
+    pedido proveedor:
+        agregar, cancelar, marcar recibido 
+            endpoint: pedidos/cliente/cancelar
+    producto:
+     ciclo:
+        alta baja
+            endpoint: ciclos/eliminar
+    balance: 
+        
+lo que anotamos el otro dia con leo:
+cosas:
+agregarle ciclo a los pedidos 
+
+endpoints nuevos:
+eliminar pedido pedidos/eliminar
+traer todos los pedidos que adeuden pedidos/traerPedidosAdeudados
+editar pedidos pedidos/editar
+producto/buscar?search=s
+pedidos/clientes/no
+
+extras:
+do cu men tar 
+deudas
+ciclos 
+ver cuantos dias falta para que finalice el ciclo
+ver si sacamos entidad cuota y la ponemos en pedidoCliente
+
+
+Esto estaba en este archivo lo dejo acá por las dudas:
 
 handle errores por ejemplo producto se carga en pedido con id y no existe
 
@@ -9,19 +46,4 @@ ver si agregamos fecha de pago a pedido
 despues todo el manejo de errores cosas onda que no se suban dos productos del mismo nombre
 y bue si algun dia alguien me dice como va la mano con eso, linea y categoria
 
-cosas:
-agregarle ciclo a los pedidos 
 
-endpoints nuevos:
-eliminar pedido pedidos/eliminar
-traer todos los pedidos que adeuden pedidos/traerPedidosAdeudados
-editar pedidos pedidos/editar
-producto/buscar?search=s
-pedidos/clientes/no_
-
-extras:
-do cu men tar 
-deudas
-ciclos 
-ver cuantos dias falta para que finalice el ciclo
-ver si sacamos entidad cuota y la ponemos en pedidoCliente
