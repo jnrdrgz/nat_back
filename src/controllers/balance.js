@@ -95,10 +95,11 @@ exports.getBalanceIntervalo = asyncHandler(async (req, res, next) => {
             { 
                 model: Pedido, 
                 attributes: ["total", "fecha"],
+               
                 where: {
                     fecha: {
-                        [Op.gte]: desde,
-                        [Op.lte]: hasta,
+                        [Op.gte]: desde, // >= desde
+                        [Op.lte]: hasta, // <= hasta
                     }      
                 }}
         ]
@@ -149,11 +150,6 @@ exports.getBalanceIntervalo = asyncHandler(async (req, res, next) => {
     //    
     //});
 
-  
-
-    
     return res.status(200).json({ success: true, data: _balance });
 
 })
-    
-
