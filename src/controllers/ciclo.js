@@ -10,11 +10,11 @@ exports.agregarCiclo = asyncHandler(async (req, res, next) => {
     console.log(req.body)
 
     //SI O SI UN BALANCE POR CICLO
-    const balance_ciclo = await Balance.create(req.body, {include: 
+    const balance_ciclo = await Balance.create(req.body, {include:
         {association: Balance.Ciclo}})
-    
+
     await balance_ciclo.save()
-    
+
     res.status(200).json({ success: true, data: balance_ciclo });
 
 })
@@ -116,4 +116,34 @@ exports.editCiclo = asyncHandler(async (req, res, next) => {
     cicloedit.save()
 
     return res.status(200).json({ success: true, data: {cicloedit} });
+})
+
+exports.finalCiclo = asyncHandler(async (req, res, next) => {
+    let cicloAct = await Ciclo.findOne({
+        attributes: [
+          "id",
+          "fechaInicio",
+          "fechaFin",
+          "numero",
+          "actual",
+          "estaEliminado",
+        ],
+        where: {
+            actual: true
+        }
+    });
+
+let fechaActual = new Date().getTime()
+
+let fechaCambiar = cicloAct.fechaFin.getTime()
+
+//let fechaMiliseg = ((fechaActual - fechaCambiar) / (1000 * 3600 * 24))
+
+let fechaMiliseg = fechaActual - fechaCambiar
+
+let fechaDias = (fechaMiliseg/86400000)
+
+
+
+return res.status(200).json({ success: true, data: {fechaDias} });
 })
