@@ -36,6 +36,7 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
                 const producto = await Producto.findOne({
                     attributes: [
                         "precio",
+                        "precioCosto",
                     ],
                     where: {
                         id: dp.ProductoId
@@ -78,7 +79,7 @@ exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
         include: [
             { model: Cliente, attributes: ["nombre"] },
             { model: Pedido, attributes: ["total"],
-                include: [{
+            include: [{
                     model: DetallePedido, attributes: ["cantidad", "subtotal"],
                     include: [{model: Producto, attributes: ["descripcion", "precio", "precioCosto"]}]
                 }]
@@ -144,10 +145,10 @@ exports.marcarPedidoPagado = asyncHandler(async (req, res, next) => {
     });
 
     if(!pedidoCl.pagado){
-    
-        await Balance.increment("ingresos", 
-            { by: pedidoCl.Pedido.total, where: { CicloId: pedidoCl.Pedido.Ciclo.id } 
-        })
+        //ponerle un if
+        //await Balance.increment("ingresos", 
+        //    { by: pedidoCl.Pedido.total, where: { CicloId: pedidoCl.Pedido.Ciclo.id } 
+        //})
     }
 
     pedidoCl.pagado = true
@@ -156,3 +157,72 @@ exports.marcarPedidoPagado = asyncHandler(async (req, res, next) => {
     res.status(200).json({ success: true, data:pedidoCl});
 })
 
+exports.pedidoPorWp = asyncHandler(async (req, res, next) => {
+    console.log(req.body)
+    
+    let pedido_str = req.body.pedido
+
+    let unidades = [...pedido_str.matchAll(/\*[0-9]*\*/g)].map(u => u[0])
+    let codigos = [...pedido_str.matchAll(/\*Código: [0-9]*\*/g)].map(c => c[0])
+    let precios_productos = 
+        [...pedido_str.matchAll(/\$ [0-9]+.[0-9]+\,[0-9]+ +[\w ]+/g)].map(pp => pp[0].replace(".",""))
+
+    let precios = precios_productos.map(p => {
+        return p.replace(/[a-zA-Z]|\$/g, "").trim()
+    })
+
+    let productos = precios_productos.map(p => {
+        return p.replace(/[0-9]|\.|,|\$/g, "").trim()
+    })
+    console.log("unidades ", unidades)
+    console.log("codigos ", codigos)
+    console.log("precios/prods", precios_productos)
+      
+    unidades = unidades.map(u => u.split("*").join(""))
+    codigos = codigos.map(c => c.replace("Código: ", "").split("*").join(""))
+    console.log("unidades ", unidades)
+    console.log("codigos ", codigos)
+    console.log("precios ", precios)
+    console.log("productos ", productos)
+    console.log("------------------------------------")
+
+    const pedido_body =  {
+        recibido: true,
+        Pedido:{
+            total: 0.0,
+            DetallePedidos: [
+                
+            ]
+        }
+    }
+
+    for(var i = 0; i < unidades.length; i++){
+        pedido_body.Pedido.DetallePedidos.push({
+            Producto:{
+                descripcion: productos[i],
+                codigo: parseInt(codigos[i]),
+                puntos: 0.0,
+                precio: parseFloat(precios[i])/parseInt(unidades[i]),
+                stock: 0.0
+            },
+            cantidad: parseInt(unidades[i]),
+            subtotal: parseFloat(precios[i])
+        })
+    }
+    
+    console.log(pedido_body.Pedido.DetallePedidos)
+
+    const pedido = await PedidoCliente.create(pedido_body, {include: [
+        {association: PedidoCliente.Cliente},
+        {association: PedidoCliente.Pedido, include: [
+            {association: Pedido.DetallePedido,
+                include: [{association: DetallePedido.Producto}]}, 
+                {association: Pedido.Ciclo}
+        ]}
+    ]});
+
+    pedido.save()
+    
+    res.status(200).json({ success: true, data: unidades });
+
+})

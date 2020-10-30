@@ -7,6 +7,8 @@ exports.test = (req, res, next) =>
         res.status(200).json({ success: true, data: "Alive" });
     })(req,res,next).catch(next))
 
+
+    
 exports.agregarProducto = asyncHandler(async (req, res, next) => {
     console.log(req.body)
     const producto = await Producto.create(req.body);
@@ -92,3 +94,4 @@ exports.editarProducto = asyncHandler(async (req, res, next) => {
 
     return res.status(200).json({ success: true, data: {productoedit} });
 })
+

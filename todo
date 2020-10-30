@@ -1,24 +1,53 @@
-sacar total del back en pedidocliente
-?? categoria linea
-se eliminan los pedidos? se cancelan? se editan?
+PRIORIDAD
+
+2/11 demo:
+    home:
+        tiempo que falta para que finalice el ciclo
+            endpoint: ciclos/tiempoRestanteActual
+    pedido cliente:
+        agregar, cancelar, marcar pagado/marcar entregado
+            endpoint: pedidos/cliente/cancelar
+        pedidos no pagados:
+            endpoint: pedidos/cliente/noPagados
+    pedido proveedor:
+        agregar, cancelar, marcar recibido 
+            endpoint: pedidos/proveedor/cancelar
+    producto:
+    ciclo:
+        alta baja
+            endpoint: ciclos/eliminar
+    balance: 
+        
+opcional: 
+    los editar
+
+lo que anotamos el otro dia con leo:
+cosas:
+agregarle ciclo a los pedidos 
+
+endpoints nuevos:
+eliminar pedido pedidos/eliminar
+traer todos los pedidos que adeuden pedidos/traerPedidosAdeudados
+editar pedidos pedidos/editar
+producto/buscar?search=s
+pedidos/clientes/no
+
+extras:
+do cu men tar 
+deudas
+ciclos 
+ver cuantos dias falta para que finalice el ciclo
+ver si sacamos entidad cuota y la ponemos en pedidoCliente
+
+
+Esto estaba en este archivo lo dejo acá por las dudas:
 
 handle errores por ejemplo producto se carga en pedido con id y no existe
-fecha pago
 
-ver como hacemo balance
-ciclos lo agregue pero solo al agregar que era una boludez
-agregarle ciclo a los pedidos
-onda como un pedido tiene detalles ponele tiene que tener un cicloid
-despues tema filtros que ya voy a ver bien como se hace
 seria onda traer solo pedidos del ciclo o traer solos pedidos de un cliente especifico o los que tienen deudas
 el tema de deudas tambien que es con cuotas
 ver si agregamos fecha de pago a pedido
-ver como cancelamo pedios
-pedidos
 despues todo el manejo de errores cosas onda que no se suban dos productos del mismo nombre
 y bue si algun dia alguien me dice como va la mano con eso, linea y categoria
 
-ptos por ciclo, sumar ptos a ciclo cuando pedido proveedor
-ver ptos tambien pedido cliente
-ver deudas
-ver cuantos dias falta para que finalice el ciclo
+
