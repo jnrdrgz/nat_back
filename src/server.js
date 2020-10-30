@@ -5,6 +5,7 @@ const pedidosCliente = require("./routes/pedidosCliente")
 const pedidosProveedor = require("./routes/pedidosProveedor")
 const ciclos = require("./routes/ciclos")
 const balances = require("./routes/balances")
+const pedidos = require("./routes/pedidos")
 
 var cors = require('cors')
 const app = express()
@@ -20,6 +21,7 @@ app.use("/pedidos/cliente", pedidosCliente);
 app.use("/pedidos/proveedor", pedidosProveedor);
 app.use("/ciclos", ciclos);
 app.use("/balances", balances);
+app.use("/pedidos", pedidos);
 
 const PORT = 3001
 app.listen(PORT, console.log(`Server started at http://localhost:${PORT}`));
