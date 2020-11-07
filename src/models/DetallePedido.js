@@ -13,6 +13,11 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: 1.0
         },
+        precioUnitario:{
+            type: DataTypes.DECIMAL(10,2),
+            allowNull: false,
+            defaultValue: 0.0
+        },
         subtotal:{
             type: DataTypes.DECIMAL(10,2),
             //allowNull: false,

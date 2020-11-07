@@ -10,7 +10,8 @@ module.exports = (sequelize, DataTypes) => {
         },
         fecha:{
             type:DataTypes.DATE,
-            allowNull: true, 
+            allowNull: true,
+            defaultValue: DataTypes.NOW
         },
         monto:{
             type: DataTypes.DECIMAL(10,2),

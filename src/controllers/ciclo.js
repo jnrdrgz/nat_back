@@ -75,7 +75,7 @@ exports.setCicloActual = asyncHandler(async (req, res, next) => {
         }
     });
 
-    if(cicloActual.actual){
+    if(cicloActual){
         cicloActual.actual = false
         cicloActual.save()
     }
@@ -118,7 +118,7 @@ exports.editCiclo = asyncHandler(async (req, res, next) => {
     return res.status(200).json({ success: true, data: {cicloedit} });
 })
 
-exports.finalCiclo = asyncHandler(async (req, res, next) => {
+exports.diasParaTerminarCiclo = asyncHandler(async (req, res, next) => {
     let cicloAct = await Ciclo.findOne({
         attributes: [
           "id",
@@ -133,17 +133,15 @@ exports.finalCiclo = asyncHandler(async (req, res, next) => {
         }
     });
 
-let fechaActual = new Date().getTime()
+    let fechaActual = new Date().getTime()
 
-let fechaCambiar = cicloAct.fechaFin.getTime()
+    let fechaCambiar = cicloAct.fechaFin.getTime()
 
-//let fechaMiliseg = ((fechaActual - fechaCambiar) / (1000 * 3600 * 24))
+    //let fechaMiliseg = ((fechaActual - fechaCambiar) / (1000 * 3600 * 24))
 
-let fechaMiliseg = fechaActual - fechaCambiar
+    let fechaMiliseg = fechaActual - fechaCambiar
 
-let fechaDias = (fechaMiliseg/86400000)
+    let fechaDias = (fechaMiliseg/86400000)
 
-
-
-return res.status(200).json({ success: true, data: {fechaDias} });
+    return res.status(200).json({ success: true, data: {"dias": fechaDias} });
 })

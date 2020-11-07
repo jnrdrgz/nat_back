@@ -6,6 +6,7 @@ const {
     PedidoCliente,
     Producto,
     Ciclo,
+    Cuota,
     Balance,
     sequelize
 } = require('../sequelize')
@@ -30,6 +31,7 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
             if(dp.Producto){
                 dp.subtotal = dp.cantidad * dp.Producto.precio
                 total_pedido += dp.subtotal
+                dp.precioUnitario = dp.Producto.precio
                 await dp.save()
                 
             } else {
@@ -44,6 +46,7 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
                 })
 
                 dp.subtotal = dp.cantidad * producto.precio
+                dp.precioUnitario = producto.precio
                 await dp.save()
                 total_pedido += dp.subtotal
             }
@@ -53,6 +56,7 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
     pedido.Pedido.total = total_pedido
     await pedido.Pedido.save()
 
+    pedido.montoSaldado = total_pedido
     await pedido.save();
 
     res.status(200).json({ success: true, data:pedido });
@@ -77,11 +81,12 @@ exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
             "pagado"
         ],
         include: [
+            { model: Cuota, attributes: ["fecha", "monto"]},
             { model: Cliente, attributes: ["nombre"] },
-            { model: Pedido, attributes: ["total"],
+            { model: Pedido, attributes: ["total", "fecha"],
             include: [{
-                    model: DetallePedido, attributes: ["cantidad", "subtotal"],
-                    include: [{model: Producto, attributes: ["descripcion", "precio", "precioCosto"]}]
+                    model: DetallePedido, attributes: ["cantidad", "subtotal", "precioUnitario"],
+                    include: [{model: Producto, attributes: ["id", "descripcion", "precio", "precioCosto"]}]
                 }]
             }
         ],
@@ -225,4 +230,77 @@ exports.pedidoPorWp = asyncHandler(async (req, res, next) => {
     
     res.status(200).json({ success: true, data: unidades });
 
+})
+
+exports.cancelarPedido = asyncHandler(async (req, res, next) => {
+    console.log(req.body)
+
+    const pedido = await PedidoCliente.findByPk(req.body.id, {
+        attributes: [
+            "id",
+            "montoSaldado",
+            "entregado",
+            "pagado"
+        ], include: [
+            { model: Pedido, attributes: ["total", "cancelado"], }
+        ],
+    });
+
+
+    pedido.Pedido.cancelado = true
+    pedido.Pedido.save()
+
+    res.status(200).json({ success: true, data:{} });
+})
+
+exports.getPedidosAdeudados = asyncHandler(async (req, res, next) => {
+    console.log(req.body)
+
+    let pedidos = await PedidoCliente.findAll({
+        attributes: [
+            "id",
+            "montoSaldado",
+            "entregado",
+            "pagado"
+        ], 
+        include: [
+            { model: Pedido, attributes: ["total"], 
+                include: [{ 
+                    model: DetallePedido, attributes: ["cantidad", "subtotal"],
+                    include: [{model: Producto, attributes: ["id", "descripcion", "precio", "precioCosto"]}] 
+                }, {model: Ciclo, attributes: ["id"],}] 
+            }
+        ],
+        where: {
+            pagado: false,
+            entregado: true
+        }
+    });
+
+    return res.status(200).json({ success: true, data: pedidos });
+})
+
+exports.pagarCuotaPedido = asyncHandler(async (req, res, next) => {
+    console.log(req.body)
+
+    const pedido = await PedidoCliente.findByPk(req.body.pedidoId, {
+        attributes: [
+            "id",
+            "montoSaldado",
+            "entregado",
+            "pagado"
+        ]
+    });
+
+    const cuota = await Cuota.create({
+        monto:req.body.monto,
+        pedidoId: pedido.id
+    })
+    cuota.save()
+    
+    pedido.montoSaldado -= req.body.monto
+    pedido.save()
+
+
+    res.status(200).json({ success: true, data: pedido });
 })

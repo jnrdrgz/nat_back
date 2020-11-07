@@ -7,7 +7,7 @@ const {
     setCicloActual,
     getAllCiclos,
     editCiclo,
-    finalCiclo
+    diasParaTerminarCiclo
 } = require("../controllers/ciclo");
 
 router.route("/").get(getAllCiclos);
@@ -15,5 +15,5 @@ router.route("/agregar").post(agregarCiclo);
 router.route("/actual").get(getCicloActual);
 router.route("/setActual").put(setCicloActual);
 router.route("/editar").put(editCiclo);
-router.route("/finCiclo").get(finalCiclo)
+router.route("/diasRestantes").get(diasParaTerminarCiclo)
 module.exports = router;

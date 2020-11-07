@@ -6,6 +6,7 @@ const {
     PedidoProveedor,
     Balance,
     Ciclo,
+    Cuota,
     sequelize
 } = require('../sequelize')
 const asyncHandler = require("../middlewares/asyncHandler")
@@ -124,7 +125,7 @@ exports.getAllPedidoProveedor = asyncHandler(async (req, res, next) => {
                 include: [{
                     model: DetallePedido, attributes: ["cantidad", "subtotal"],
                     include: [{
-                      model: Producto, attributes: ["descripcion", "precio", "precioCosto"]}]
+                      model: Producto, attributes: ["descripcion", "precio", "precioCosto", "codigo"]}]
                 }]
             }
         ],
