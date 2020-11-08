@@ -13,21 +13,84 @@ const {
 
 const asyncHandler = require("../middlewares/asyncHandler")
 
-exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
-    req.body.Pedido.DetallePedidos.map(dp => {
-        console.log(dp)
-    })
+exports.getCodes = asyncHandler(async (req, res, next) => {
 
     
     let all_codigos = await Producto.findAll({attributes: ["codigo"]})
     all_codigos = all_codigos.map(c => parseInt(c.codigo))
     console.log(all_codigos)
 
+    res.status(200).json({ success: true, data:{codigos: all_codigos} });
 
-    //////////////
-    if(req.body.actualizarProductos){
-        await Promise.all(
-            req.body.Pedido.DetallePedidos.map(async dp => {
+})
+
+exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
+    req.body.Pedido.DetallePedidos.map(dp => {
+        console.log(dp)
+    })
+
+    const pedido = await PedidoCliente.build(req.body, {include: [
+        {association: PedidoCliente.Cliente},
+        {association: PedidoCliente.Pedido, include: [
+            {association: Pedido.DetallePedido,
+                include: [{association: DetallePedido.Producto}]
+            }, 
+                {association: Pedido.Ciclo}
+        ]}
+    ]});
+
+    console.log(pedido.Pedido.DetallePedidos[0])
+        
+    //await Promise.all(
+    //    pedido.Pedido.DetallePedidos.map(async dp => {
+    //        if(dp.Producto){
+    //            dp.subtotal = dp.cantidad * dp.Producto.precio
+    //            total_pedido += dp.subtotal
+    //            dp.precioUnitario = dp.Producto.precio
+    //            await dp.save()  
+    //        } else {
+    //            const producto = await Producto.findOne({
+    //                attributes: [
+    //                    "precio",
+    //                    "precioCosto",
+    //                ],
+    //                where: {
+    //                    id: dp.ProductoId
+    //                }
+    //            })
+//
+    //            dp.subtotal = dp.cantidad * producto.precio
+    //            dp.precioUnitario = producto.precio
+    //            await dp.save()
+    //            total_pedido += dp.subtotal
+    //        }
+    //    })
+    //)
+    
+    let all_codigos = await Producto.findAll({attributes: ["codigo"]})
+    all_codigos = all_codigos.map(c => parseInt(c.codigo))
+    console.log(all_codigos)
+
+    let ret_f = false
+                    
+    if(!req.body.actualizarProductos){
+        pedido.Pedido.DetallePedidos.map(dp => {
+            if(dp.Producto){
+                if(all_codigos.includes(parseInt(dp.Producto.codigo))){
+                    res.status(300).json({ success: false, data:{} });
+                    ret_f = true
+                    return;
+                }
+            }
+        })
+    }
+
+    if(ret_f) return;
+    let total_pedido = 0
+    await Promise.all(
+        pedido.Pedido.DetallePedidos.map(async dp => {
+            console.log("DP::::::", dp)
+
             if(dp.Producto){
                 if(all_codigos.includes(parseInt(dp.Producto.codigo))){
                 
@@ -51,72 +114,16 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
                         producto.precioCosto = dp.Producto.precioCosto
                         await producto.save()
                         
-                        dp = {
-                            ProductoId: producto.id,
-                            cantidad: dp.cantidad,
-                        }
-                        //codigos_prods_actualizados.push(dp.Producto.codigo)
-                        //dp.Producto.id = producto.id
-                        //
-                        //console.log("IDn", producto.id)
-                        //console.log("IDv", dp.Producto.id)
+                        console.log("DP::::::", dp.Producto)
+                        //dp.Producto.Id = producto.id
+                        dp.setDataValue("Producto", producto)
                     }
                 }
-            }
-        })
-        )
-    }
 
-    //console.log(req.body)
-    req.body.Pedido.DetallePedidos.map(dp => {
-        console.log(dp)
-    })
-
-
-    
-    //////////////
-
-    const pedido = await PedidoCliente.create(req.body, {include: [
-        {association: PedidoCliente.Cliente},
-        {association: PedidoCliente.Pedido, include: [
-            {association: Pedido.DetallePedido,
-                include: [{association: DetallePedido.Producto}]}, 
-                {association: Pedido.Ciclo}
-        ]}
-    ]});
-
-    console.log(pedido.Pedido.DetallePedidos[0])
-    
-    //if(c in all_codigos){
-    //}
-
-    let ret_f = false;
-    if(!req.body.actualizarProductos){
-        pedido.Pedido.DetallePedidos.map(dp => {
-            if(dp.Producto){
-                if(all_codigos.includes(parseInt(dp.Producto.codigo))){
-                    res.status(300).json({ success: false, data:{} });
-                    ret_f = true
-                    return;
-                }
-            }
-        })
-    }
-    if(ret_f){
-        pedido.destroy()
-        return;
-    }
-
-    let codigos_prods_actualizados = []
-    let total_pedido = 0
-    await Promise.all(
-        pedido.Pedido.DetallePedidos.map(async dp => {
-            if(dp.Producto){
-                
                 dp.subtotal = dp.cantidad * dp.Producto.precio
                 total_pedido += dp.subtotal
                 dp.precioUnitario = dp.Producto.precio
-                await dp.save()  
+                //await dp.save()  
             } else {
                 const producto = await Producto.findOne({
                     attributes: [
@@ -130,11 +137,12 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
 
                 dp.subtotal = dp.cantidad * producto.precio
                 dp.precioUnitario = producto.precio
-                await dp.save()
+                //await dp.save()
                 total_pedido += dp.subtotal
             }
         })
     )
+
 
     pedido.Pedido.total = total_pedido
     await pedido.Pedido.save()
