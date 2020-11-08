@@ -135,13 +135,13 @@ exports.diasParaTerminarCiclo = asyncHandler(async (req, res, next) => {
 
     let fechaActual = new Date().getTime()
 
-    let fechaCambiar = cicloAct.fechaFin.getTime()
+    let fechaCiclo = cicloAct.fechaFin.getTime()
 
+    let diasRestantes = ((fechaCiclo-fechaActual)/(1000 * 3600 * 24))
     //let fechaMiliseg = ((fechaActual - fechaCambiar) / (1000 * 3600 * 24))
 
-    let fechaMiliseg = fechaActual - fechaCambiar
+    //let fechaMiliseg = fechaActual - fechaCambiar
+    //let fechaDias = (fechaMiliseg/86400000)
 
-    let fechaDias = (fechaMiliseg/86400000)
-
-    return res.status(200).json({ success: true, data: {"dias": fechaDias} });
+    return res.status(200).json({ success: true, data: {"fechaInicio": cicloAct.fechaInicio, "fechaFin": cicloAct.fechaFin, "diasRestantes": Math.ceil(diasRestantes)+1} });
 })

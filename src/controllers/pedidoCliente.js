@@ -14,7 +14,67 @@ const {
 const asyncHandler = require("../middlewares/asyncHandler")
 
 exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
-    console.log(req.body)
+    req.body.Pedido.DetallePedidos.map(dp => {
+        console.log(dp)
+    })
+
+    
+    let all_codigos = await Producto.findAll({attributes: ["codigo"]})
+    all_codigos = all_codigos.map(c => parseInt(c.codigo))
+    console.log(all_codigos)
+
+
+    //////////////
+    if(req.body.actualizarProductos){
+        await Promise.all(
+            req.body.Pedido.DetallePedidos.map(async dp => {
+            if(dp.Producto){
+                if(all_codigos.includes(parseInt(dp.Producto.codigo))){
+                
+                    const producto = await Producto.findOne({
+                        attributes: [
+                            "id",
+                            "precio",
+                            "precioCosto",
+                            "stock",
+                            "puntos"
+                        ],
+                        where: {
+                            codigo: dp.Producto.codigo
+                        }
+                    })
+
+                    if(producto){
+                        producto.stock += dp.Producto.stock
+                        producto.puntos = dp.Producto.puntos
+                        producto.precio = dp.Producto.precio
+                        producto.precioCosto = dp.Producto.precioCosto
+                        await producto.save()
+                        
+                        dp = {
+                            ProductoId: producto.id,
+                            cantidad: dp.cantidad,
+                        }
+                        //codigos_prods_actualizados.push(dp.Producto.codigo)
+                        //dp.Producto.id = producto.id
+                        //
+                        //console.log("IDn", producto.id)
+                        //console.log("IDv", dp.Producto.id)
+                    }
+                }
+            }
+        })
+        )
+    }
+
+    //console.log(req.body)
+    req.body.Pedido.DetallePedidos.map(dp => {
+        console.log(dp)
+    })
+
+
+    
+    //////////////
 
     const pedido = await PedidoCliente.create(req.body, {include: [
         {association: PedidoCliente.Cliente},
@@ -25,15 +85,38 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
         ]}
     ]});
 
+    console.log(pedido.Pedido.DetallePedidos[0])
+    
+    //if(c in all_codigos){
+    //}
+
+    let ret_f = false;
+    if(!req.body.actualizarProductos){
+        pedido.Pedido.DetallePedidos.map(dp => {
+            if(dp.Producto){
+                if(all_codigos.includes(parseInt(dp.Producto.codigo))){
+                    res.status(300).json({ success: false, data:{} });
+                    ret_f = true
+                    return;
+                }
+            }
+        })
+    }
+    if(ret_f){
+        pedido.destroy()
+        return;
+    }
+
+    let codigos_prods_actualizados = []
     let total_pedido = 0
     await Promise.all(
         pedido.Pedido.DetallePedidos.map(async dp => {
             if(dp.Producto){
+                
                 dp.subtotal = dp.cantidad * dp.Producto.precio
                 total_pedido += dp.subtotal
                 dp.precioUnitario = dp.Producto.precio
-                await dp.save()
-                
+                await dp.save()  
             } else {
                 const producto = await Producto.findOne({
                     attributes: [
@@ -56,7 +139,6 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
     pedido.Pedido.total = total_pedido
     await pedido.Pedido.save()
 
-    pedido.montoSaldado = total_pedido
     await pedido.save();
 
     res.status(200).json({ success: true, data:pedido });
@@ -82,7 +164,7 @@ exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
         ],
         include: [
             { model: Cuota, attributes: ["fecha", "monto"]},
-            { model: Cliente, attributes: ["nombre"] },
+            { model: Cliente, attributes: ["nombre", "numeroTelefono"] },
             { model: Pedido, attributes: ["total", "fecha"],
             include: [{
                     model: DetallePedido, attributes: ["cantidad", "subtotal", "precioUnitario"],
@@ -90,7 +172,20 @@ exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
                 }]
             }
         ],
+        order: [
+            [{model: Pedido}, "fecha", 'DESC'],
+        ],
+       
+        
     });
+
+    if(req.query.onlyDeudores){
+        console.log("Only Deudores")
+        //pedidos.filter()
+        pedidos = pedidos.filter((p) =>{
+            return !p.pagado
+        })
+    }
 
     return res.status(200).json({ success: true, data: pedidos });
 
@@ -165,6 +260,9 @@ exports.marcarPedidoPagado = asyncHandler(async (req, res, next) => {
 exports.pedidoPorWp = asyncHandler(async (req, res, next) => {
     console.log(req.body)
     
+    
+    
+
     let pedido_str = req.body.pedido
 
     let unidades = [...pedido_str.matchAll(/\*[0-9]*\*/g)].map(u => u[0])
@@ -211,24 +309,27 @@ exports.pedidoPorWp = asyncHandler(async (req, res, next) => {
                 stock: 0.0
             },
             cantidad: parseInt(unidades[i]),
-            subtotal: parseFloat(precios[i])
+            //subtotal: parseFloat(precios[i])
         })
     }
     
     console.log(pedido_body.Pedido.DetallePedidos)
 
-    const pedido = await PedidoCliente.create(pedido_body, {include: [
-        {association: PedidoCliente.Cliente},
-        {association: PedidoCliente.Pedido, include: [
-            {association: Pedido.DetallePedido,
-                include: [{association: DetallePedido.Producto}]}, 
-                {association: Pedido.Ciclo}
-        ]}
-    ]});
+    res.status(200).json({ success: true, data: pedido_body });
 
-    pedido.save()
-    
-    res.status(200).json({ success: true, data: unidades });
+
+//    const pedido = await PedidoCliente.create(pedido_body, {include: [
+//        {association: PedidoCliente.Cliente},
+//        {association: PedidoCliente.Pedido, include: [
+//            {association: Pedido.DetallePedido,
+//                include: [{association: DetallePedido.Producto}]}, 
+//                {association: Pedido.Ciclo}
+//        ]}
+//    ]});
+//
+//    pedido.save()
+//    
+//    res.status(200).json({ success: true, data: unidades });
 
 })
 
@@ -298,7 +399,10 @@ exports.pagarCuotaPedido = asyncHandler(async (req, res, next) => {
     })
     cuota.save()
     
-    pedido.montoSaldado -= req.body.monto
+    pedido.montoSaldado += parseFloat(req.body.monto)
+    if(pedido.montoSaldado <= 0){
+        pedido.pagado = true;
+    }
     pedido.save()
 
 
