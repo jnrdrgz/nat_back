@@ -7,8 +7,6 @@ exports.test = (req, res, next) =>
         res.status(200).json({ success: true, data: "Alive" });
     })(req,res,next).catch(next))
 
-
-    
 exports.agregarProducto = asyncHandler(async (req, res, next) => {
     console.log(req.body)
     const producto = await Producto.create(req.body);
@@ -28,6 +26,7 @@ exports.eliminarProducto = asyncHandler(async (req, res, next) => {
             "codigo",
             "puntos",
             "precio",
+            "precioCosto",
             "stock",
             "foto",
             "estaEliminado",
@@ -48,13 +47,17 @@ exports.getProductos = asyncHandler(async (req, res, next) => {
             "codigo",
             "puntos",
             "precio",
+            "precioCosto",
             "stock",
             "foto",
             "estaEliminado",
         ],
         where: {
             estaEliminado: false
-        }
+        },
+        order: [
+            [ "descripcion", 'ASC'],
+        ]
     });
 
     return res.status(200).json({ success: true, data: productos });
@@ -82,6 +85,7 @@ exports.editarProducto = asyncHandler(async (req, res, next) => {
             "codigo",
             "puntos",
             "precio",
+            "precioCosto",
             "stock",
             "foto",
             "estaEliminado",
