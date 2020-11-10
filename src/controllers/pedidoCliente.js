@@ -1,4 +1,4 @@
-const {Op,QueryTypes} = require('sequelize')
+const {Op,QueryTypes, useInflection} = require('sequelize')
 const {
     Pedido,
     Cliente,
@@ -14,9 +14,7 @@ const {
 const asyncHandler = require("../middlewares/asyncHandler")
 
 exports.getCodes = asyncHandler(async (req, res, next) => {
-
-    
-    let all_codigos = await Producto.findAll({attributes: ["codigo"]})
+let all_codigos = await Producto.findAll({attributes: ["codigo"]})
     all_codigos = all_codigos.map(c => parseInt(c.codigo))
     console.log(all_codigos)
 
@@ -39,34 +37,6 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
         ]}
     ]});
 
-    console.log(pedido.Pedido.DetallePedidos[0])
-        
-    //await Promise.all(
-    //    pedido.Pedido.DetallePedidos.map(async dp => {
-    //        if(dp.Producto){
-    //            dp.subtotal = dp.cantidad * dp.Producto.precio
-    //            total_pedido += dp.subtotal
-    //            dp.precioUnitario = dp.Producto.precio
-    //            await dp.save()  
-    //        } else {
-    //            const producto = await Producto.findOne({
-    //                attributes: [
-    //                    "precio",
-    //                    "precioCosto",
-    //                ],
-    //                where: {
-    //                    id: dp.ProductoId
-    //                }
-    //            })
-//
-    //            dp.subtotal = dp.cantidad * producto.precio
-    //            dp.precioUnitario = producto.precio
-    //            await dp.save()
-    //            total_pedido += dp.subtotal
-    //        }
-    //    })
-    //)
-    
     let all_codigos = await Producto.findAll({attributes: ["codigo"]})
     all_codigos = all_codigos.map(c => parseInt(c.codigo))
     console.log(all_codigos)
@@ -86,10 +56,11 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
     }
 
     if(ret_f) return;
+
     let total_pedido = 0
     await Promise.all(
         pedido.Pedido.DetallePedidos.map(async dp => {
-            console.log("DP::::::", dp)
+            //console.log("DP::::::", dp)
 
             if(dp.Producto){
                 if(all_codigos.includes(parseInt(dp.Producto.codigo))){
@@ -145,7 +116,7 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
 
 
     pedido.Pedido.total = total_pedido
-    await pedido.Pedido.save()
+    //await pedido.Pedido.save()
 
     await pedido.save();
 
@@ -253,6 +224,7 @@ exports.marcarPedidoPagado = asyncHandler(async (req, res, next) => {
     });
 
     if(!pedidoCl.pagado){
+        pedidoCl.montoSaldado = pedidoCl.Pedido.total
         //ponerle un if
         //await Balance.increment("ingresos", 
         //    { by: pedidoCl.Pedido.total, where: { CicloId: pedidoCl.Pedido.Ciclo.id } 
@@ -267,17 +239,15 @@ exports.marcarPedidoPagado = asyncHandler(async (req, res, next) => {
 
 exports.pedidoPorWp = asyncHandler(async (req, res, next) => {
     console.log(req.body)
-    
-    
-    
 
     let pedido_str = req.body.pedido
 
     let unidades = [...pedido_str.matchAll(/\*[0-9]*\*/g)].map(u => u[0])
     let codigos = [...pedido_str.matchAll(/\*Código: [0-9]*\*/g)].map(c => c[0])
     let precios_productos = 
-        [...pedido_str.matchAll(/\$ [0-9]+.[0-9]+\,[0-9]+ +[\w ]+/g)].map(pp => pp[0].replace(".",""))
+        [...pedido_str.matchAll(/\$ [0-9]+.?[0-9]+\,[0-9]+ +[\w ]+/g)].map(pp => pp[0].replace(".",""))
 
+        console.log(precios_productos)
     let precios = precios_productos.map(p => {
         return p.replace(/[a-zA-Z]|\$/g, "").trim()
     })
@@ -307,23 +277,23 @@ exports.pedidoPorWp = asyncHandler(async (req, res, next) => {
         }
     }
 
+    let productos_list = []
     for(var i = 0; i < unidades.length; i++){
-        pedido_body.Pedido.DetallePedidos.push({
-            Producto:{
+        productos_list.push(
+            {
                 descripcion: productos[i],
                 codigo: parseInt(codigos[i]),
                 puntos: 0.0,
                 precio: parseFloat(precios[i])/parseInt(unidades[i]),
-                stock: 0.0
-            },
-            cantidad: parseInt(unidades[i]),
-            //subtotal: parseFloat(precios[i])
-        })
+                stock: 0.0,
+                cantidad: unidades[i]
+            }
+        )
     }
     
-    console.log(pedido_body.Pedido.DetallePedidos)
-
-    res.status(200).json({ success: true, data: pedido_body });
+    
+    //return para subirlo en front y de ahi carga manual
+    res.status(200).json({ success: true, data: {productos:productos_list}} );
 
 
 //    const pedido = await PedidoCliente.create(pedido_body, {include: [
