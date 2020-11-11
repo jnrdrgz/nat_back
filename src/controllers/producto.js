@@ -9,6 +9,16 @@ exports.test = (req, res, next) =>
 
 exports.agregarProducto = asyncHandler(async (req, res, next) => {
     console.log(req.body)
+    
+    if(!req.body.descripcion){
+        res.status(400).json({ success: false, msg: "Descripcion vacía" });
+        return;    
+    }
+
+    if(req.body.precio == 0 || req.body.precio == "0"){
+        res.status(400).json({ success: false, msg: "El precio no puede ser 0" });
+        return;    
+    }
     const producto = await Producto.create(req.body);
 
     await producto.save();
