@@ -373,7 +373,7 @@ exports.pagarCuotaPedido = asyncHandler(async (req, res, next) => {
 
     const cuota = await Cuota.create({
         monto:req.body.monto,
-        pedidoId: pedido.id
+        PedidoClienteId: pedido.id
     })
     cuota.save()
     

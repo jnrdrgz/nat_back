@@ -40,7 +40,7 @@ Pedido.DetallePedido = Pedido.hasMany(DetallePedido)
 DetallePedido.belongsTo(Pedido)
 
 PedidoCliente.hasMany(Cuota)
-Cuota.belongsTo(PedidoCliente)
+Cuota.PedidoCliente = Cuota.belongsTo(PedidoCliente)
 
 Cliente.hasMany(PedidoCliente)
 PedidoCliente.Cliente = PedidoCliente.belongsTo(Cliente)
