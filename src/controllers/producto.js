@@ -9,6 +9,18 @@ exports.test = (req, res, next) =>
 
 exports.agregarProducto = asyncHandler(async (req, res, next) => {
     console.log(req.body)
+    
+    if(!req.body.foto) req.body.foto = "https://res.cloudinary.com/dy5tuirk1/image/upload/v1605068028/j9z0pfqs8zros1kh23do.jpg" 
+
+    if(!req.body.descripcion){
+        res.status(400).json({ success: false, msg: "Descripcion vacía" });
+        return;    
+    }
+
+    if(req.body.precio == 0 || req.body.precio == "0"){
+        res.status(400).json({ success: false, msg: "El precio no puede ser 0" });
+        return;    
+    }
     const producto = await Producto.create(req.body);
 
     await producto.save();

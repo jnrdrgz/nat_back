@@ -37,7 +37,7 @@ module.exports = (sequelize, DataTypes) => {
         },
         foto: {
             type: DataTypes.STRING,
-            defaultValue: "a"
+            defaultValue: "https://res.cloudinary.com/dy5tuirk1/image/upload/v1605068028/j9z0pfqs8zros1kh23do.jpg"
         },
         estaEliminado:{
             type: DataTypes.BOOLEAN,
