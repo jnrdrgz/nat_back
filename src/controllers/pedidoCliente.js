@@ -242,10 +242,10 @@ exports.pedidoPorWp = asyncHandler(async (req, res, next) => {
 
     let pedido_str = req.body.pedido
 
-    let unidades = [...pedido_str.matchAll(/\*[0-9]*\*/g)].map(u => u[0])
-    let codigos = [...pedido_str.matchAll(/\*Código: [0-9]*\*/g)].map(c => c[0])
+    let unidades = [...pedido_str.matchAll(/\*?[0-9]*\*? \*?unidad\(es\)/g)].map(u => u[0].replace(" unidad(es)",""))
+    let codigos = [...pedido_str.matchAll(/\*?Código: [0-9]*\*?/g)].map(c => c[0])
     let precios_productos = 
-        [...pedido_str.matchAll(/\$ [0-9]+.?[0-9]+\,[0-9]+ +.+\n+/g)].map(pp => pp[0].replace(".",""))
+        [...pedido_str.matchAll(/\$ [0-9]+.?[0-9]+\,[0-9]+ +.+/g)].map(pp => pp[0].replace(".",""))
 
         console.log(precios_productos)
     let precios = precios_productos.map(p => {
