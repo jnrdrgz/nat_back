@@ -124,11 +124,11 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
 })
 
 //cancelar?
-exports.cancelarPedido = asyncHandler(async (req, res, next) => {
-    console.log(req.body)
-
-    res.status(200).json({ success: true, data:{} });
-})
+//exports.cancelarPedido = asyncHandler(async (req, res, next) => {
+//    console.log(req.body)
+//
+//    res.status(200).json({ success: true, data:{} });
+//})
 
 
 exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
@@ -144,7 +144,7 @@ exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
         include: [
             { model: Cuota, attributes: ["fecha", "monto"]},
             { model: Cliente, attributes: ["nombre", "numeroTelefono"] },
-            { model: Pedido, attributes: ["total", "fecha"],
+            { model: Pedido, attributes: ["total", "fecha", "cancelado"],
             include: [{
                     model: DetallePedido, attributes: ["cantidad", "subtotal", "precioUnitario"],
                     include: [{model: Producto, attributes: ["id", "descripcion", "precio", "precioCosto"]}]
@@ -214,7 +214,7 @@ exports.marcarPedidoPagado = asyncHandler(async (req, res, next) => {
             "entregado",
             "pagado"
         ], include: [
-            { model: Pedido, attributes: ["total"], 
+            { model: Pedido, attributes: ["total", "cancelado"], 
                 include: [{ 
                     model: DetallePedido, attributes: ["cantidad", "subtotal"],
                     include: [{model: Producto, attributes: ["id", "descripcion", "precio", "precioCosto"]}] 
@@ -296,19 +296,6 @@ exports.pedidoPorWp = asyncHandler(async (req, res, next) => {
     res.status(200).json({ success: true, data: {productos:productos_list}} );
 
 
-//    const pedido = await PedidoCliente.create(pedido_body, {include: [
-//        {association: PedidoCliente.Cliente},
-//        {association: PedidoCliente.Pedido, include: [
-//            {association: Pedido.DetallePedido,
-//                include: [{association: DetallePedido.Producto}]}, 
-//                {association: Pedido.Ciclo}
-//        ]}
-//    ]});
-//
-//    pedido.save()
-//    
-//    res.status(200).json({ success: true, data: unidades });
-
 })
 
 exports.cancelarPedido = asyncHandler(async (req, res, next) => {
@@ -321,14 +308,15 @@ exports.cancelarPedido = asyncHandler(async (req, res, next) => {
             "entregado",
             "pagado"
         ], include: [
-            { model: Pedido, attributes: ["total", "cancelado"], }
+            { model: Pedido, attributes: ["id", "total", "cancelado"], }
         ],
     });
 
-
+    console.log(pedido.Pedido.toJSON())
     pedido.Pedido.cancelado = true
     pedido.Pedido.save()
-
+    pedido.save()
+//
     res.status(200).json({ success: true, data:{} });
 })
 
