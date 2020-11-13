@@ -192,9 +192,16 @@ exports.marcarPedidoEntregado = asyncHandler(async (req, res, next) => {
 
     await Promise.all(
         pedEntregado.Pedido.DetallePedidos.map(async (dp) => {
-                await Producto.decrement('stock',
-                    { by: dp.cantidad, where: { id: dp.ProductoId }
-                })
+                if(dp.Producto.stock-dp.cantidad >= 0){
+                    await Producto.decrement('stock',
+                        { by: dp.cantidad, where: { id: dp.ProductoId }
+                    })
+                } else {
+                    if(dp.Producto.stock != 0){
+                        dp.Producto.stock = 0.0
+                        await dp.Producto.save()
+                    }
+                }
         })
     );
 
