@@ -76,7 +76,7 @@ notas:
 
 Producto:
 Endpoint: /productos/eliminar
-put
+PUT
 parameters:
 {
     "id": long -> id existente
@@ -103,7 +103,7 @@ return:
 
 Producto:
 Endpoint: /productos/editar
-put
+PUT
 parameters:
 {
             "id": long -> id existente
@@ -136,6 +136,26 @@ return
         }
     }
 }
+////////////BALANCES//////////////
+
+Endpoint: /balances/ciclo/:id -> necesita id especifica
+GET:
+parameters:
+-
+return
+{
+    "success": true,
+    "data": {
+        "id": "37b7db41-b664-4feb-9c0b-55d8c231ab66",
+        "ingresos": 0,
+        "egresos": 0
+    }
+}
+
+
+
+
+
 
 
 
@@ -427,6 +447,40 @@ return
             }
         }
     ]
+}
+
+Endpoint: /pedidos/proveedor/recibido
+PUT
+parameters:
+{
+"id": long -> id existente
+}
+-
+return
+
+{
+    "success": true,
+    "data": {
+        "id": "cf186b21-4bc6-443e-b4cb-051dd56b7690",
+        "Pedido": {
+            "total": 420,
+            "DetallePedidos": [
+                {
+                    "cantidad": 3,
+                    "subtotal": 420,
+                    "Producto": {
+                        "id": "d32fca4f-a9a5-43ea-9d7b-d67a38c4c345",
+                        "descripcion": "Producto2",
+                        "precio": 200,
+                        "precioCosto": 140
+                    }
+                }
+            ],
+            "Ciclo": null
+        },
+        "recibido": true,
+        "updatedAt": "2020-11-14T12:55:21.176Z"
+    }
 }
 
 
