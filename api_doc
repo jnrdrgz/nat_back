@@ -74,6 +74,72 @@ notas:
 -solo devuelve si estaEliminado == false
 -foto es una url con la img del producto
 
+Producto:
+Endpoint: /productos/eliminar
+put
+parameters:
+{
+    "id": long -> id existente
+
+}
+-
+return:
+{
+    "success": true,
+    "data": {
+        "producto": {
+            "id": "968288cf-9d23-4b52-8bc7-314449a0ba67",
+            "descripcion": "Eau de parfum femenino  rub",
+            "codigo": 69615,
+            "puntos": 0,
+            "precio": 12780,
+            "precioCosto": 0,
+            "stock": 0,
+            "foto": "a",
+            "estaEliminado": true
+        }
+    }
+}
+
+Producto:
+Endpoint: /productos/editar
+put
+parameters:
+{
+            "id": long -> id existente
+            "descripcion": string,
+            "codigo": long,
+            "puntos": long,
+            "precio": float,
+            "precioCosto": float,
+            "stock": float,
+            "foto": string
+
+}
+-
+return
+
+{
+    "success": true,
+    "data": {
+        "productoedit": {
+            "id": "20a843b7-738d-4ac3-969e-098d068cbf72",
+            "descripcion": "pepepepepepep",
+            "codigo": 69615,
+            "puntos": 0,
+            "precio": 35195,
+            "precioCosto": 0,
+            "stock": 0,
+            "foto": "a",
+            "estaEliminado": false,
+            "updatedAt": "2020-11-14T06:08:16.358Z"
+        }
+    }
+}
+
+
+
+
 
 ////////////PEDIDOS//////////////
 Endpoint: /pedidos/cliente/agregar
@@ -185,27 +251,65 @@ return
     ]
 }
 
+Endpoint: /pedidos/cliente/pagado
+PUT:
+parameters:
+{
+    "id": long -> id existente
+}
+-
+return
+
+{
+    "success": true,
+    "data": {
+        "id": "8d2acad5-7905-4ae8-b899-b92c063b20bb",
+        "montoSaldado": 0,
+        "entregado": false,
+        "pagado": true,
+        "Pedido": {
+            "total": 200,
+            "DetallePedidos": [
+                {
+                    "cantidad": 1,
+                    "subtotal": 200,
+                    "Producto": {
+                        "id": "d32fca4f-a9a5-43ea-9d7b-d67a38c4c345",
+                        "descripcion": "Producto2",
+                        "precio": 200,
+                        "precioCosto": 140
+                    }
+                }
+            ],
+            "Ciclo": null
+        }
+    }
+}
+
+
+
+
 Endpoint: /pedidos/proveedor/agregar
 POST:
 parameters:
 -
 {
     "Pedido":{
-        "total": 0.0,
+        "total": float,
 	    "DetallePedidos": [
 		    {
-			    "ProductoId": "b78aa4cb-bc44-4a24-bb30-163fe8a4a79b",
-			    "cantidad": 3.0
+			    "ProductoId": long,
+			    "cantidad": float
 		    },
             {
 			    "Producto":{
-                    "descripcion": "producto nuevo ceado directamente",
-                    "codigo": 13551,
-                    "puntos": 345,
-                    "precio": 321.12,
-                    "stock": 333.00
+                    "descripcion": string,
+                    "codigo": long,
+                    "puntos": long,
+                    "precio": float,
+                    "stock": float
                 },
-			    "cantidad": 5.0
+			    "cantidad": float
 		    }
 	    ]
     }
@@ -326,8 +430,155 @@ return
 }
 
 
+////////////Ciclos//////////////
+Endpoint: /ciclos
+GET:
+parameters:
+-
+return
+{
+    "success": true,
+    "data": [
+        {
+            "id": "b15675b2-f92e-4286-930f-88d12f9c209d",
+            "fechaInicio": "2020-10-28T20:15:50.914Z",
+            "fechaFin": "2020-10-28T20:15:50.914Z",
+            "numero": "14B",
+            "actual": true,
+            "estaEliminado": false
+        },
+        {
+            "id": "690b7715-6fc3-4e4a-af50-eb3403353e02",
+            "fechaInicio": "2020-10-28T20:19:10.509Z",
+            "fechaFin": "2020-10-28T20:19:10.509Z",
+            "numero": "14B",
+            "actual": false,
+            "estaEliminado": false
+        },
+        {
+            "id": "49f2fc02-04a7-4376-8921-6175b802cc94",
+            "fechaInicio": "2020-10-21T00:00:00.000Z",
+            "fechaFin": "2020-10-30T00:00:00.000Z",
+            "numero": "12C",
+            "actual": false,
+            "estaEliminado": false
+        }
+    ]
+}
 
+Endpoint: /ciclo/agregar
+POST:
+parameters:
+{
+"Ciclo": {
+  "numero": long,
+  "actual": bool,
+  "fechaInicio": long,
+  "fechaFin": long
+}
+}
+-
+return
 
+{
+    "success": true,
+    "data": {
+        "id": "45a8a9d0-fad9-4117-be40-8a006955be43",
+        "ingresos": 0,
+        "egresos": 0,
+        "Ciclo": {
+            "id": "81993d2f-3dca-42cf-8c36-8220238be602",
+            "estaEliminado": false,
+            "numero": "20A",
+            "actual": false,
+            "fechaInicio": "2020-10-04T00:00:00.000Z",
+            "fechaFin": "2020-10-29T00:00:00.000Z",
+            "updatedAt": "2020-11-14T02:52:46.738Z",
+            "createdAt": "2020-11-14T02:52:46.738Z"
+        },
+        "updatedAt": "2020-11-14T02:52:46.735Z",
+        "createdAt": "2020-11-14T02:52:46.735Z",
+        "CicloId": "81993d2f-3dca-42cf-8c36-8220238be602"
+    }
+}
+
+Endpoint: /ciclos/setActual
+PUT:
+parameters:
+{
+    "id": long -> id existente
+
+}
+-
+return
+{
+    "success": true,
+    "data": {}
+}
+
+Endpoint: /ciclos/editar
+PUT:
+parameters:
+{
+
+            "id": "b15675b2-f92e-4286-930f-88d12f9c209d",
+            "numero": "30B",
+            "actual": "false",
+            "fechaInicio": "2020-9-04",
+            "fechaFin": "2020-10-14"
+
+}
+-
+return
+{
+    "success": true,
+    "data": {
+        "cicloedit": {
+            "id": "b15675b2-f92e-4286-930f-88d12f9c209d",
+            "fechaInicio": "2020-09-04T03:00:00.000Z",
+            "fechaFin": "2020-10-14T00:00:00.000Z",
+            "numero": "30B",
+            "actual": false,
+            "estaEliminado": false,
+            "updatedAt": "2020-11-14T03:08:15.275Z"
+        }
+    }
+}
+Endpoint: /ciclos/diasRestantes
+PUT:
+parameters:
+{
+            "id": long -> id existente
+}
+-
+return
+
+{
+    "success": true,
+    "data": {
+        "fechaInicio": "2020-10-21T00:00:00.000Z",
+        "fechaFin": "2020-10-30T00:00:00.000Z",
+        "diasRestantes": -14
+    }
+}
+Endpoint: /ciclos/actual
+GET:
+parameters:
+-
+return
+
+{
+    "success": true,
+    "data": {
+        "id": "49f2fc02-04a7-4376-8921-6175b802cc94",
+        "fechaInicio": "2020-10-21T00:00:00.000Z",
+        "fechaFin": "2020-10-30T00:00:00.000Z",
+        "numero": "12C",
+        "actual": true,
+        "estaEliminado": false
+    }
+}
+////////////  //////////////
 
 
 
@@ -355,3 +606,4 @@ Endpoint: /pedidos/cliente/marcar_pagado PUT
 Endpoint: /pedidos/proveedor/marcar_recibido PUT ???
 
 ver filtros en get
+faf
