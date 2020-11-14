@@ -32,7 +32,7 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
         {association: PedidoCliente.Pedido, include: [
             {association: Pedido.DetallePedido,
                 include: [{association: DetallePedido.Producto}]
-            }, 
+            },
                 {association: Pedido.Ciclo}
         ]}
     ]});
@@ -42,7 +42,7 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
     console.log(all_codigos)
 
     let ret_f = false
-                    
+
     if(!req.body.actualizarProductos){
         pedido.Pedido.DetallePedidos.map(dp => {
             if(dp.Producto){
@@ -64,7 +64,7 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
 
             if(dp.Producto){
                 if(all_codigos.includes(parseInt(dp.Producto.codigo))){
-                
+
                     const producto = await Producto.findOne({
                         attributes: [
                             "id",
@@ -84,7 +84,7 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
                         producto.precio = dp.Producto.precio
                         producto.precioCosto = dp.Producto.precioCosto
                         await producto.save()
-                        
+
                         console.log("DP::::::", dp.Producto)
                         //dp.Producto.Id = producto.id
                         dp.setDataValue("Producto", producto)
@@ -94,7 +94,7 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
                 dp.subtotal = dp.cantidad * dp.Producto.precio
                 total_pedido += dp.subtotal
                 dp.precioUnitario = dp.Producto.precio
-                //await dp.save()  
+                //await dp.save()
             } else {
                 const producto = await Producto.findOne({
                     attributes: [
@@ -154,8 +154,8 @@ exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
         order: [
             [{model: Pedido}, "fecha", 'DESC'],
         ],
-       
-        
+
+
     });
 
     if(req.query.onlyDeudores){
@@ -214,11 +214,11 @@ exports.marcarPedidoPagado = asyncHandler(async (req, res, next) => {
             "entregado",
             "pagado"
         ], include: [
-            { model: Pedido, attributes: ["total"], 
-                include: [{ 
+            { model: Pedido, attributes: ["total"],
+                include: [{
                     model: DetallePedido, attributes: ["cantidad", "subtotal"],
-                    include: [{model: Producto, attributes: ["id", "descripcion", "precio", "precioCosto"]}] 
-                }, {model: Ciclo, attributes: ["id"],}] 
+                    include: [{model: Producto, attributes: ["id", "descripcion", "precio", "precioCosto"]}]
+                }, {model: Ciclo, attributes: ["id"],}]
             }
         ],
     });
@@ -226,8 +226,8 @@ exports.marcarPedidoPagado = asyncHandler(async (req, res, next) => {
     if(!pedidoCl.pagado){
         pedidoCl.montoSaldado = pedidoCl.Pedido.total
         //ponerle un if
-        //await Balance.increment("ingresos", 
-        //    { by: pedidoCl.Pedido.total, where: { CicloId: pedidoCl.Pedido.Ciclo.id } 
+        //await Balance.increment("ingresos",
+        //    { by: pedidoCl.Pedido.total, where: { CicloId: pedidoCl.Pedido.Ciclo.id }
         //})
     }
 
@@ -244,7 +244,7 @@ exports.pedidoPorWp = asyncHandler(async (req, res, next) => {
 
     let unidades = [...pedido_str.matchAll(/\*[0-9]*\*/g)].map(u => u[0])
     let codigos = [...pedido_str.matchAll(/\*Código: [0-9]*\*/g)].map(c => c[0])
-    let precios_productos = 
+    let precios_productos =
         [...pedido_str.matchAll(/\$ [0-9]+.?[0-9]+\,[0-9]+ +.+\n+/g)].map(pp => pp[0].replace(".",""))
 
         console.log(precios_productos)
@@ -258,7 +258,7 @@ exports.pedidoPorWp = asyncHandler(async (req, res, next) => {
     console.log("unidades ", unidades)
     console.log("codigos ", codigos)
     console.log("precios/prods", precios_productos)
-      
+
     unidades = unidades.map(u => u.split("*").join(""))
     codigos = codigos.map(c => c.replace("Código: ", "").split("*").join(""))
     console.log("unidades ", unidades)
@@ -272,7 +272,7 @@ exports.pedidoPorWp = asyncHandler(async (req, res, next) => {
         Pedido:{
             total: 0.0,
             DetallePedidos: [
-                
+
             ]
         }
     }
@@ -290,8 +290,8 @@ exports.pedidoPorWp = asyncHandler(async (req, res, next) => {
             }
         )
     }
-    
-    
+
+
     //return para subirlo en front y de ahi carga manual
     res.status(200).json({ success: true, data: {productos:productos_list}} );
 
@@ -300,13 +300,13 @@ exports.pedidoPorWp = asyncHandler(async (req, res, next) => {
 //        {association: PedidoCliente.Cliente},
 //        {association: PedidoCliente.Pedido, include: [
 //            {association: Pedido.DetallePedido,
-//                include: [{association: DetallePedido.Producto}]}, 
+//                include: [{association: DetallePedido.Producto}]},
 //                {association: Pedido.Ciclo}
 //        ]}
 //    ]});
 //
 //    pedido.save()
-//    
+//
 //    res.status(200).json({ success: true, data: unidades });
 
 })
@@ -341,13 +341,13 @@ exports.getPedidosAdeudados = asyncHandler(async (req, res, next) => {
             "montoSaldado",
             "entregado",
             "pagado"
-        ], 
+        ],
         include: [
-            { model: Pedido, attributes: ["total"], 
-                include: [{ 
+            { model: Pedido, attributes: ["total"],
+                include: [{
                     model: DetallePedido, attributes: ["cantidad", "subtotal"],
-                    include: [{model: Producto, attributes: ["id", "descripcion", "precio", "precioCosto"]}] 
-                }, {model: Ciclo, attributes: ["id"],}] 
+                    include: [{model: Producto, attributes: ["id", "descripcion", "precio", "precioCosto"]}]
+                }, {model: Ciclo, attributes: ["id"],}]
             }
         ],
         where: {
@@ -376,7 +376,7 @@ exports.pagarCuotaPedido = asyncHandler(async (req, res, next) => {
         PedidoClienteId: pedido.id
     })
     cuota.save()
-    
+
     pedido.montoSaldado += parseFloat(req.body.monto)
     if(pedido.montoSaldado <= 0){
         pedido.pagado = true;
