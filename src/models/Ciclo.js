@@ -22,6 +22,11 @@ module.exports = (sequelize, DataTypes) => {
             defaultValue: "",
             allowNull: false,    
         },
+        puntosNecesarios:{
+            type: DataTypes.BIGINT,
+            defaultValue: 0,
+            allowNull: true,    
+        },
         //auto calculado si dan las fechas?
         actual:{
             type: DataTypes.BOOLEAN,

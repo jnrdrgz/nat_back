@@ -134,6 +134,10 @@ exports.agregarPedidoCliente = asyncHandler(async (req, res, next) => {
 exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
     console.log(req.body)
 
+    let param_order = [
+        [{model: Pedido}, "fecha", 'DESC'],
+    ]
+    
     let pedidos = await PedidoCliente.findAll({
         attributes: [
             "id",
@@ -151,9 +155,7 @@ exports.getAllPedidoCliente = asyncHandler(async (req, res, next) => {
                 }]
             }
         ],
-        order: [
-            [{model: Pedido}, "fecha", 'DESC'],
-        ],
+        order: param_order
        
         
     });
@@ -363,6 +365,8 @@ exports.pagarCuotaPedido = asyncHandler(async (req, res, next) => {
             "montoSaldado",
             "entregado",
             "pagado"
+        ],include: [
+            { model: Pedido, attributes: ["total"]}
         ]
     });
 

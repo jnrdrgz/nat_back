@@ -4,6 +4,7 @@ const {
     Balance,
     PedidoCliente,
     Cliente,
+    Pedido,
     sequelize
 } = require('../sequelize')
 const asyncHandler = require("../middlewares/asyncHandler")

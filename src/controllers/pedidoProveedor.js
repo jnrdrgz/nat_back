@@ -46,6 +46,25 @@ exports.marcarPedidoProveedorRecibido = asyncHandler(async (req, res, next) => {
         //})
     }
 
+    //let cicloActual = await Ciclo.findOne({
+    //    attributes: [
+    //      "id",
+    //      "fechaInicio",
+    //      "fechaFin",
+    //      "numero",
+    //      "actual",
+    //      "estaEliminado",
+    //    ],
+    //    where: {
+    //        actual: true
+    //    }
+    //});
+
+    //if(cicloActual){
+    //    //puntos
+    //    cicloActual.save()
+    //}
+
     pedido.recibido = true
     pedido.save()
     return res.status(200).json({ success: true, data: pedido });
