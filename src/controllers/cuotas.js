@@ -21,7 +21,8 @@ exports.getAllCuotas = asyncHandler(async (req, res, next) => {
         include: [
             { model: PedidoCliente, attributes: ["id", "montoSaldado"],
             include: [
-                { model: Cliente, attributes: ["nombre", "numeroTelefono"] }
+                { model: Cliente, attributes: ["nombre", "numeroTelefono"] },
+                { model: Pedido, attributes: ["total"] } 
             ]}
         ]
     });
