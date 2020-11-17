@@ -329,6 +329,37 @@ exports.cancelarPedido = asyncHandler(async (req, res, next) => {
     res.status(200).json({ success: true, data:{} });
 })
 
+exports.editarPedido = asyncHandler(async (req, res, next) => {
+    
+    console.log(req.body.id)
+    let pedidoEdit = await PedidoCliente.findByPk(req.body.id, {
+        attributes: [
+            "id",
+            "montoSaldado",
+            "entregado",
+            "pagado"
+        ], include: [
+            { model: Pedido, attributes: ["total", "cancelado"], 
+                include: [{ 
+                    model: DetallePedido, attributes: ["cantidad", "subtotal"],
+                    include: [{model: Producto, attributes: ["id", "descripcion", "precio", "precioCosto"]}] 
+                }, 
+                {model: Ciclo, attributes: ["id"],}] 
+            }
+        ],
+    });
+
+    console.log(pedidoEdit)
+    //await pedidoEdit.update(req.body, {where: req.params})
+
+    pedidoEdit.Pedido.DetallePedidos = req.body.Pedido.DetallePedidos 
+    pedidoEdit.save()
+
+    return res.status(200).json({ success: true, data: {pedidoEdit} });
+})
+
+
+
 exports.getPedidosAdeudados = asyncHandler(async (req, res, next) => {
     console.log(req.body)
 
