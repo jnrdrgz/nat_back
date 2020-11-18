@@ -106,15 +106,30 @@ exports.getBalanceIntervalo = asyncHandler(async (req, res, next) => {
         ]
     })
 
+    //let ingresos_cuotas = await Cuota.sum("monto", {
+    //    where: {
+    //        fecha: {
+    //            [Op.gte]: desde, // >= desde
+    //            [Op.lte]: hasta, // <= hasta
+    //        }      
+    //    }})
+      
     let ingresos_cuotas = await Cuota.sum("monto", {
         where: {
             fecha: {
                 [Op.gte]: desde, // >= desde
                 [Op.lte]: hasta, // <= hasta
             }      
-        }})
-    console.log(ingresos_cuotas)
+        },
+        include: [
+            { model: PedidoCliente, attributes: ["id", "montoSaldado"], 
+            where: {
+                pagado: false
+            }}
+        ]
+    })
 
+        
     let egresos_proveedor = await PedidoProveedor.sum("total", {
         where: {
             recibido: true
