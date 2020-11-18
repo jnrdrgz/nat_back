@@ -5,6 +5,7 @@ const {
     PedidoCliente,
     PedidoProveedor,
     Pedido,
+    Cuota,
     sequelize
 } = require('../sequelize')
 const asyncHandler = require("../middlewares/asyncHandler")
@@ -105,6 +106,15 @@ exports.getBalanceIntervalo = asyncHandler(async (req, res, next) => {
         ]
     })
 
+    let ingresos_cuotas = await Cuota.sum("monto", {
+        where: {
+            fecha: {
+                [Op.gte]: desde, // >= desde
+                [Op.lte]: hasta, // <= hasta
+            }      
+        }})
+    console.log(ingresos_cuotas)
+
     let egresos_proveedor = await PedidoProveedor.sum("total", {
         where: {
             recibido: true
@@ -124,7 +134,7 @@ exports.getBalanceIntervalo = asyncHandler(async (req, res, next) => {
 
 
     let _balance = {
-        ingresos: ingresos_pcliente,
+        ingresos: ingresos_pcliente+ingresos_cuotas,
         egresos: egresos_proveedor
     }
 
