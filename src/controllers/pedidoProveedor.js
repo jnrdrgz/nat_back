@@ -17,7 +17,7 @@ exports.marcarPedidoProveedorRecibido = asyncHandler(async (req, res, next) => {
     let pedido = await PedidoProveedor.findByPk(req.body.id, {
         attributes: [
             "id",
-            //recibido //agregar a modelo
+            "recibido" //agregar a modelo
         ],
         include: [
             { model: Pedido, attributes: ["total"], 
@@ -72,7 +72,8 @@ exports.marcarPedidoProveedorRecibido = asyncHandler(async (req, res, next) => {
 
 exports.agregarPedidoProveedor = asyncHandler(async (req, res, next) => {
     console.log(req.body)
-
+    
+    req.body.puntosTotales = 0
     const pedidoProv = await PedidoProveedor.create(req.body, {include: [
         {association: PedidoProveedor.Pedido, include: [
             {association: Pedido.DetallePedido,
@@ -83,16 +84,19 @@ exports.agregarPedidoProveedor = asyncHandler(async (req, res, next) => {
     console.log(  pedidoProv.Pedido.DetallePedidos[0].toJSON())
 
     let total_pedidopv = 0
+    let total_ptos = 0
     await Promise.all(
         pedidoProv.Pedido.DetallePedidos.map(async dp => {
             if(dp.Producto){
                 dp.subtotal = dp.cantidad * dp.Producto.precioCosto
                 total_pedidopv += dp.subtotal
+                total_ptos += dp.Producto.puntos
             } else {
                 const producto = await Producto.findOne({
                     attributes: [
                         "precio",
                         "precioCosto",
+                        "puntos"
                     ],
                     where: {
                         id: dp.ProductoId
@@ -100,6 +104,7 @@ exports.agregarPedidoProveedor = asyncHandler(async (req, res, next) => {
                 })
 
                 dp.subtotal = dp.cantidad * producto.precioCosto
+                total_ptos += producto.puntos
                 await dp.save()
 
                 total_pedidopv += dp.subtotal
@@ -110,6 +115,7 @@ exports.agregarPedidoProveedor = asyncHandler(async (req, res, next) => {
     pedidoProv.Pedido.total = total_pedidopv
     await pedidoProv.Pedido.save()
     
+
     if(req.body.recibido){
         //cargar stock
         //pedidoProv
@@ -123,9 +129,13 @@ exports.agregarPedidoProveedor = asyncHandler(async (req, res, next) => {
         );
         
     }
-
+    
     await pedidoProv.save()
-
+    
+    console.log("ptossssssss", total_ptos)
+    pedidoProv.puntosTotales = total_ptos
+    await pedidoProv.save()
+    
     
     res.status(200).json({ success: true, data:pedidoProv });
 })
@@ -138,6 +148,7 @@ exports.getAllPedidoProveedor = asyncHandler(async (req, res, next) => {
         attributes: [
             "id", 
             "recibido",
+            "puntosTotales"
         ],
         include: [
             { model: Pedido, attributes: ["total", "fecha"],
@@ -145,7 +156,8 @@ exports.getAllPedidoProveedor = asyncHandler(async (req, res, next) => {
                     model: DetallePedido, attributes: ["cantidad", "subtotal"],
                     include: [{
                       model: Producto, attributes: ["descripcion", "precio", "precioCosto", "codigo"]}]
-                }]
+                }, 
+                {model: Ciclo, attributes: ["id", "numero"],}]
             }
         ],
     });

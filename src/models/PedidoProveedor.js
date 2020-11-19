@@ -10,7 +10,12 @@ module.exports = (sequelize, DataTypes) => {
         },
         recibido:{
             type: DataTypes.BOOLEAN,
-            defaultValue: true
+            defaultValue: false
+        },
+        puntosTotales:{
+            type: DataTypes.BIGINT,
+            defaultValue: 0,
+            allowNull: false,
         },
     })
 }
